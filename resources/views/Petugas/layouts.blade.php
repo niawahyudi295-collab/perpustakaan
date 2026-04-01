@@ -7,7 +7,7 @@
         body {
             margin: 0;
             font-family: Arial;
-            background: linear-gradient(#f3c6d3, #a76aa3);
+            
         }
 
         /* SIDEBAR */
@@ -58,14 +58,14 @@
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <h3>Perpustakaan<br>Digital</h3>
+    <h3>System<br>Perpustakaan</h3>
 
     <div class="menu">
-        <a href="/dashboard">📊 Dashboard</a>
-        <a href="/buku">📚 Data Buku</a>
+        
+        <a href="#">📚 Data Buku</a>
         <a href="#">👤 Daftar Anggota</a>
-        <a href="#">📥 Riwayat Peminjaman</a>
-        <a href="#">📄 Laporan Transaksi</a>
+        <a href="#">📥 Peminjaman</a>
+        <a href="#">📄 Kategori</a>
     </div>
 </div>
 

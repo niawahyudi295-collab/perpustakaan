@@ -6,131 +6,119 @@
 @section('content')
 
 <style>
-    .search-container {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 40px;
-    }
+body {
+    background: linear-gradient(to bottom, #e9c6d3, #b57aa1);
+    font-family: Arial, sans-serif;
+}
 
-    .search-box {
-        width: 60%;
-        padding: 12px 20px;
-        border-radius: 10px;
-        border: 2px solid #4CAF50;
-        outline: none;
-    }
+/* SEARCH */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
 
-    .container-buku {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 60px;
-    }
+.search-box {
+    width: 60%;
+    padding: 12px 20px;
+    border-radius: 20px;
+    border: 2px solid #4CAF50;
+    outline: none;
+}
 
-    .buku-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+/* GRID */
+.buku-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+    padding: 20px 80px;
+}
 
-    .buku-atas {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-    }
+/* CARD */
+.buku-card {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
 
-    .buku-atas img {
-        width: 130px;
-        height: 190px;
-        object-fit: cover;
-        border-radius: 5px;
-    }
+/* IMAGE */
+.buku-card img {
+    width: 120px;
+    height: 170px;
+    object-fit: cover;
+}
 
-    .detail {
-        font-size: 14px;
-    }
+/* TEXT */
+.buku-info {
+    font-size: 14px;
+}
 
-    .label {
-        font-weight: bold;
-        font-size: 13px;
-    }
+.buku-info p {
+    margin: 5px 0;
+}
 
-    .kategori {
-        color: darkred;
-        margin-bottom: 10px;
-    }
+.kategori {
+    color: #a52a2a;
+}
 
-    .judul {
-        font-weight: bold;
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
+/* BUTTON */
+.btn-pinjam {
+    margin-top: 10px;
+    padding: 8px 25px;
+    background-color: #1e88e5;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
 
-    .btn-pinjam {
-        margin-top: 15px;
-        background: #1e88e5;
-        color: white;
-        padding: 10px 30px;
-        border-radius: 20px;
-        text-decoration: none;
-    }
+.btn-pinjam:hover {
+    background-color: #1565c0;
+}
 </style>
 
-<!-- SEARCH -->
 <div class="search-container">
-    <input type="text" class="search-box" placeholder="🔍 search">
+    <input type="text" class="search-box" placeholder="search">
 </div>
 
-<!-- LIST -->
-<div class="container-buku">
+<div class="buku-container">
 
-@foreach($buku as $b)
-    <div class="buku-item">
+    @foreach($buku as $b)
+    <div class="buku-container">
 
-        <div class="buku-atas">
+    <!-- Buku 1 -->
+    <div class="buku-card">
+        <img src="/images/laskar.png" width="120">
 
-            <!-- GAMBAR (FIXED) -->
-            @if($b->judul == 'Laskar Pelangi')
-                <img src="{{ asset('images/Buku/laskar.png') }}">
-            @elseif($b->judul == 'Bumi')
-                <img src="{{ asset('images/Buku/bumi.png') }}">
-            @endif
 
-            <!-- DETAIL -->
-            <div class="detail">
-                <div class="judul">
-                    {{ $b->judul ?? 'Tanpa Judul' }}
-                </div>
+        <div class="buku-info">
+            <p><b>KATEGORI :</b></p>
+            <p class="kategori">Fiksi</p>
 
-                <div class="label">KATEGORI :</div>
-                <div class="kategori">
-                    {{ $b->kategori ?? 'Fiksi' }}
-                </div>
+            <p><b>JUMLAH BUKU :</b></p>
+            <p>50</p>
 
-                <div class="label">JUMLAH BUKU :</div>
-                <div>
-                    {{ $b->jumlah ?? '0' }}
-                </div>
-
-                <!-- OPTIONAL -->
-                <div class="label">PENULIS :</div>
-                <div>
-                    {{ $b->penulis ?? 'Andrea' }}
-                </div>
-
-                <div class="label">TAHUN :</div>
-                <div>
-                    {{ $b->tahun ?? '2005' }}
-                </div>
-            </div>
-
+            <button class="btn-pinjam">Pinjam</button>
         </div>
-
-        <a href="/buku/pinjam/{{ $b->id_buku }}" class="btn-pinjam">
-            Pinjam
-        </a>
-
     </div>
-@endforeach
+
+    <!-- Buku 2 -->
+    <div class="buku-card">
+        <img src="/images/bumi.png" width="120">
+
+        <div class="buku-info">
+            <p><b>KATEGORI :</b></p>
+            <p class="kategori">Fiksi</p>
+
+            <p><b>JUMLAH BUKU :</b></p>
+            <p>45</p>
+
+            <button class="btn-pinjam">Pinjam</button>
+        </div>
+    </div>
+
+</div>
+    @endforeach
 
 </div>
 

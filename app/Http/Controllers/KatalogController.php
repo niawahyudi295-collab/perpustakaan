@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 
-class BukuController extends Controller
+class KatalogController extends Controller
 {
     // tampil menu buku
     public function index()

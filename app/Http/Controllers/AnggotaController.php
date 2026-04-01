@@ -3,22 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AnggotaController extends Controller
 {
     public function dashboard()
-    {
-        return view('anggota.dashboard');
-    }
+{
+    return view('anggota.dashboard');
+}
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
+public function menuBuku()
+{
+    return view('anggota.menu_buku');
+}
 
-        $request->session()->flush();
-        $request->session()->regenerateToken();
+public function peminjaman()
+{
+    return view('anggota.peminjaman');
+}
 
-        return redirect('/login');
-    }
+public function anggota()
+{
+    return view('anggota.daftar_anggota');
+}
 }

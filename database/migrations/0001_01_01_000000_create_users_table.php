@@ -11,22 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Tabel users
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // Tambahan kolom untuk perpustakaan
+            $table->enum('role', ['kepala', 'petugas', 'anggota'])->default('anggota');
+            $table->enum('jk', ['L', 'P'])->nullable();
+            $table->string('phone_number')->nullable();
+            $table->text('alamat')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
 
+        // Tabel password reset tokens
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // Tabel sessions
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
@@ -42,8 +52,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use App\Models\Peminjaman;
 
 class PetugasController extends Controller
 {
-    public function index()
+    public function dashboard()
     {
-        // contoh data (bisa kamu ganti dari database)
-        $peminjaman = DB::table('peminjaman')->count();
-        $terlambat = DB::table('peminjaman')
-                        ->where('status', 'terlambat')
-                        ->count();
+        $peminjaman = Peminjaman::count();
+
+        $terlambat = Peminjaman::where('tgl_kembali', '<', now())
+                                ->where('status', 'dipinjam')
+                                ->count();
 
         return view('petugas.dashboard', compact('peminjaman', 'terlambat'));
     }

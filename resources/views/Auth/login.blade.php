@@ -114,26 +114,25 @@
         @endif
 
         <form method="POST" action="/login">
-            @csrf
+    @csrf
 
-            <div class="input-group">
-                👤
-                <input type="text" name="username" placeholder="username" required>
-            </div>
-
-            <div class="input-group">
-                🔒
-                <input type="password" name="password" placeholder="password" required>
-            </div>
-
-            <button type="submit" class="btn">LOGIN</button>
-
-            <div class="register">
-                Belum memiliki akun?<br>
-                <a href="/register">DAFTAR SEKARANG</a>
-            </div>
-        </form>
+    <div class="input-group">
+        👤
+        <input type="email" name="email" placeholder="Email" required>
     </div>
+
+    <div class="input-group">
+        🔒
+        <input type="password" name="password" placeholder="Password" required>
+    </div>
+
+    <button type="submit" class="btn">LOGIN</button>
+
+    <div class="register">
+        Belum memiliki akun?<br>
+        <a href="/register">DAFTAR SEKARANG</a>
+    </div>
+</form>
 </div>
 
 <div class="footer"></div>

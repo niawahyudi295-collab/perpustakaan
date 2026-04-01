@@ -1,81 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
     <title>@yield('title')</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: sans-serif;
-            display: flex;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandPink: '#cc7dae',
+                        bgSoftPink: '#f8ebf1',
+                    }
+                }
+            }
         }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 220px;
-            background: #8c0e64;
-            height: 100vh;
-            padding: 20px;
-        }
-
-        .sidebar h3 {
-            text-align: center;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px;
-            margin: 10px 0;
-            background: #e7dcdc;
-            text-decoration: none;
-            color: black;
-            border-radius: 10px;
-        }
-
-        .sidebar a:hover {
-            background: #ccc;
-        }
-
-        /* MAIN */
-        .main {
-            flex: 1;
-        }
-
-        .header {
-            background: #b57aa1;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .content {
-            padding: 20px;
-        }
-    </style>
-
+    </script>
 </head>
-<body>
+<body class="bg-gray-50">
+
+<div class="flex">
 
     <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h3>System Perpustakaan</h3>
-        <a href="#">📚 Menu Buku</a>
-        <a href="#">📖 Peminjaman Buku</a>
-        <a href="#">📜Daftar Anggota</a>
-    </div>
+    <aside class="w-64 bg-pink-800 min-h-screen p-5 text-white">
+        <h3 class="text-center font-bold mb-6">System Perpustakaan</h3>
+
+        <a href="/buku" class="block bg-gray-200 text-black p-3 mb-3 rounded">📚 Menu Buku</a>
+        <a href="/peminjaman" class="block bg-gray-200 text-black p-3 mb-3 rounded">📖 Peminjaman Buku</a>
+        <a href="#" class="block bg-gray-200 text-black p-3 rounded">📜 Daftar Anggota</a>
+    </aside>
 
     <!-- MAIN -->
-    <div class="main">
-        <div class="header">
+    <div class="flex-1">
+
+        <!-- HEADER -->
+        <div class="bg-brandPink text-white text-center p-5 text-2xl font-bold">
             @yield('header')
         </div>
 
-        <div class="content">
+        <!-- CONTENT -->
+        <div class="p-6 bg-bgSoftPink min-h-screen">
             @yield('content')
         </div>
+
     </div>
+
+</div>
 
 </body>
 </html>

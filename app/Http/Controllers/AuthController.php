@@ -3,44 +3,55 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
-
-
-
+    // ================= LOGIN PAGE
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    // ================= REGISTER PAGE
     public function showRegister()
     {
         return view('auth.register');
     }
 
-    // LOGIN (sementara tanpa validasi database)
+    // ================= LOGIN
     public function login(Request $request)
-    {
-        // simpan session dummy
-        session(['user' => [
-            'nama' => 'User Demo'
-        ]]);
+{
+    $credentials = $request->only('email', 'password');
 
-        return redirect('/anggota/dashboard');
+    if (Auth::attempt($credentials)) {
+
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        if ($user->role == 'anggota') {
+            return redirect('/anggota/dashboard');
+        } elseif ($user->role == 'petugas') {
+            return redirect('/petugas/dashboard');
+        } elseif ($user->role == 'kepala') {
+            return redirect('/kepala/dashboard');
+        }
+
+        
     }
 
-    // REGISTER (sementara langsung redirect)
-    public function register(Request $request)
-    {
-        return redirect('/login')->with('success', 'Registrasi berhasil!');
-    }
-
-    // LOGOUT
+    return back()->with('error', 'Email atau password salah');
+}
+    // ================= LOGOUT
     public function logout(Request $request)
     {
-        $request->session()->forget('user'); // hapus session
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect('/login');
     }
 }

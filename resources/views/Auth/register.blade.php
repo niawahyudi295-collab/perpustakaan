@@ -123,9 +123,6 @@
                 <input type="text" name="alamat" placeholder="Alamat" required>
             </div>
 
-            <div class="input-group">
-                <input type="text" name="no_tlp" placeholder="No. Tlp" required>
-            </div>
 
             <div class="input-group">
                 <input type="text" name="username" placeholder="Username" required>

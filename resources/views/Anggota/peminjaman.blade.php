@@ -64,17 +64,32 @@
                 <th>Tanggal Pinjam</th>
                 <th>Tanggal Kembali</th>
                 <th>Status</th>
+                <th>Denda</th>
                 <th>Aksi</th>
             </tr>
         </thead>
 
         <tbody>
         @forelse($peminjaman as $i => $p)
+
+            @php
+                $today = \Carbon\Carbon::now();
+                $tgl_kembali = \Carbon\Carbon::parse($p->tgl_kembali);
+
+                $denda = 0;
+
+                if($p->status == 'dipinjam' && $today->gt($tgl_kembali)) {
+                    $terlambat = $today->diffInDays($tgl_kembali);
+                    $denda = $terlambat * 1000;
+                }
+            @endphp
+
             <tr>
                 <td>{{ $i + 1 }}</td>
                 <td>{{ $p->judul }}</td>
                 <td>{{ $p->tgl_pinjam }}</td>
                 <td>{{ $p->tgl_kembali }}</td>
+
                 <td>
                     @if($p->status == 'dipinjam')
                         <span style="color: orange;">Dipinjam</span>
@@ -82,14 +97,26 @@
                         <span style="color: green;">Dikembalikan</span>
                     @endif
                 </td>
+
+                <td>
+                    @if($denda > 0)
+                        <span style="color:red;">
+                            Rp {{ number_format($denda, 0, ',', '.') }}
+                        </span>
+                    @else
+                        Rp 0
+                    @endif
+                </td>
+
                 <td>
                     <a href="#" class="btn btn-kembali">Kembalikan</a>
                     <a href="#" class="btn btn-hapus">Hapus</a>
                 </td>
             </tr>
+
         @empty
             <tr>
-                <td colspan="6">Belum ada data peminjaman</td>
+                <td colspan="7">Belum ada data peminjaman</td>
             </tr>
         @endforelse
         </tbody>

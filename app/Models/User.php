@@ -10,29 +10,21 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Field yang boleh diisi
-     */
     protected $fillable = [
         'name',
-        'alamat',
-        'no_tlp',
-        'username',
         'email',
         'password',
+        'role',
+        'jk',
+        'phone_number',
+        'alamat'
     ];
 
-    /**
-     * Field yang disembunyikan
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Casting data
-     */
     protected function casts(): array
     {
         return [
