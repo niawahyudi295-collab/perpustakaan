@@ -62,7 +62,7 @@
 
     <div class="menu">
         
-        <a href="#">📚 Data Buku</a>
+        <a href="{{ route('bukupetugas.index') }}">📚 Data Buku</a>
         <a href="#">👤 Daftar Anggota</a>
         <a href="#">📥 Peminjaman</a>
         <a href="#">📄 Kategori</a>

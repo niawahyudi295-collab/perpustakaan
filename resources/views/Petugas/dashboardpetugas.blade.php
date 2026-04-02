@@ -11,7 +11,7 @@ Selamat Datang, Petugas 👋
     <div class="card">
         <h3>📚 Kelola Buku</h3>
         <p>Tambah, edit, dan hapus buku</p>
-        <a href="/petugas/buku/create/edit/index">📚 Data Buku</a>
+        <a href="{{ route('bukupetugas.create') }}" class="btn-tambah">+Tambah Buku</a>
     </div>
 
     <div class="card">

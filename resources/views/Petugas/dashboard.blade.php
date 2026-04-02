@@ -14,12 +14,12 @@
 
     <div style="width:300px; background:#e7c6d3; padding:20px; border-radius:10px;">
         <h3>Peminjaman Saat Ini</h3>
-        <p>{{ $peminjaman }}</p>
+        <p>{{ 2}}</p>
     </div>
 
     <div style="width:300px; background:#e7c6d3; padding:20px; border-radius:10px;">
         <h3>Keterlambatan</h3>
-        <p>{{ $terlambat }}</p>
+        <p>{{ 3}}</p>
     </div>
 
 </div>

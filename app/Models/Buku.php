@@ -11,4 +11,6 @@ class Buku extends Model
 
     protected $table = 'buku'; // optional, Laravel otomatis p-buku plural
     protected $fillable = ['judul', 'pengarang', 'penerbit', 'jumlah'];
+
+    
 }

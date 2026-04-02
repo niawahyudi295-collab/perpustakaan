@@ -11,7 +11,6 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* SEARCH */
 .search-container {
     display: flex;
     justify-content: center;
@@ -26,7 +25,6 @@ body {
     outline: none;
 }
 
-/* GRID */
 .buku-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -34,21 +32,21 @@ body {
     padding: 20px 80px;
 }
 
-/* CARD */
 .buku-card {
     display: flex;
     gap: 20px;
     align-items: center;
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
 }
 
-/* IMAGE */
 .buku-card img {
     width: 120px;
     height: 170px;
     object-fit: cover;
 }
 
-/* TEXT */
 .buku-info {
     font-size: 14px;
 }
@@ -61,7 +59,6 @@ body {
     color: #a52a2a;
 }
 
-/* BUTTON */
 .btn-pinjam {
     margin-top: 10px;
     padding: 8px 25px;
@@ -84,40 +81,22 @@ body {
 <div class="buku-container">
 
     @foreach($buku as $b)
-    <div class="buku-container">
-
-    <!-- Buku 1 -->
     <div class="buku-card">
-        <img src="/images/laskar.png" width="120">
 
+        {{-- GAMBAR --}}
+        <img src="{{ asset('images/kata.PNG') }}" alt="buku">
 
         <div class="buku-info">
             <p><b>KATEGORI :</b></p>
-            <p class="kategori">Fiksi</p>
+            <p class="kategori">{{ $b->kategori }}</p>
 
             <p><b>JUMLAH BUKU :</b></p>
-            <p>50</p>
+            <p>{{ $b->stok }}</p>
 
             <button class="btn-pinjam">Pinjam</button>
         </div>
+
     </div>
-
-    <!-- Buku 2 -->
-    <div class="buku-card">
-        <img src="/images/bumi.png" width="120">
-
-        <div class="buku-info">
-            <p><b>KATEGORI :</b></p>
-            <p class="kategori">Fiksi</p>
-
-            <p><b>JUMLAH BUKU :</b></p>
-            <p>45</p>
-
-            <button class="btn-pinjam">Pinjam</button>
-        </div>
-    </div>
-
-</div>
     @endforeach
 
 </div>
