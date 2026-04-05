@@ -1,26 +1,29 @@
-@extends('Petugas.layouts')
+@extends('petugas.layouts')
 
 @section('title', 'Dashboard')
-
 @section('header', 'DASHBOARD')
 
 @section('content')
 
-<div style="text-align:center; font-size:25px; margin-bottom:40px;">
+<div style="text-align:center; font-size:22px; margin-bottom:40px; color:#333;">
     Hallo, Petugas Perpustakaan Digital
 </div>
 
-<div style="display:flex; justify-content:space-around;">
+<div style="display:flex; justify-content:space-around; flex-wrap:wrap; gap:20px;">
 
-    <div style="width:300px; background:#e7c6d3; padding:20px; border-radius:10px;">
-        <h3>Peminjaman Saat Ini</h3>
-        <p>{{ 2}}</p>
-    </div>
+    <a href="{{ route('petugas.peminjaman') }}" style="text-decoration:none; color:inherit;">
+        <div style="width:300px; background:#e7c6d3; padding:25px; border-radius:10px; cursor:pointer;">
+            <h3 style="margin-bottom:10px; font-size:16px;">Peminjaman Saat Ini</h3>
+            <p style="font-size:32px; font-weight:bold;">{{ $peminjaman }}</p>
+        </div>
+    </a>
 
-    <div style="width:300px; background:#e7c6d3; padding:20px; border-radius:10px;">
-        <h3>Keterlambatan</h3>
-        <p>{{ 3}}</p>
-    </div>
+    <a href="{{ route('petugas.peminjaman') }}" style="text-decoration:none; color:inherit;">
+        <div style="width:300px; background:#e7c6d3; padding:25px; border-radius:10px; cursor:pointer;">
+            <h3 style="margin-bottom:10px; font-size:16px;">Keterlambatan</h3>
+            <p style="font-size:32px; font-weight:bold;">{{ $terlambat }}</p>
+        </div>
+    </a>
 
 </div>
 

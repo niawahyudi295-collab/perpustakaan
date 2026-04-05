@@ -1,134 +1,67 @@
 @extends('petugas.layouts')
 
+@section('title', 'Data Buku')
+@section('header', 'DATA BUKU')
+
 @section('content')
-<style>
-    body {
-        background: #d8cfd3;
-        font-family: sans-serif;
-    }
 
-    
-    .header {
-    width: 100%;
-    margin: 0; /* HAPUS JARAK ATAS */
-    background: #b06c93;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    font-size: 28px;
-    font-weight: bold;
-}
+@if(session('success'))
+    <div style="background:#d4edda; color:#155724; padding:10px 15px; border-radius:6px; margin-bottom:15px;">
+        {{ session('success') }}
+    </div>
+@endif
 
-    .container {
-        width: 80%;
-        margin: auto; /* INI YANG BIKIN TENGAH */
-        background: white;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-    }
+<div style="margin-bottom:15px;">
+    <a href="{{ route('petugas.bukupetugas.create') }}"
+       style="background:#b57ba6; color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-size:14px;">
+        + Tambah Buku
+    </a>
+</div>
 
-    .btn-tambah {
-        background: #eee;
-        padding: 10px 20px;
-        border-radius: 10px;
-        text-decoration: none;
-        color: black;
-        display: inline-block;
-        margin-bottom: 15px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th {
-        background: #a69ca2;
-        color: white;
-        padding: 12px;
-    }
-
-    td {
-        background: #f9f9f9;
-        padding: 10px;
-        text-align: center;
-    }
-
-    tr:nth-child(even) td {
-        background: #eee;
-    }
-
-    .btn-edit {
-        background: #4da6ff;
-        color: white;
-        padding: 5px 10px;
-        text-decoration: none;
-        border-radius: 5px;
-    }
-
-    .btn-hapus {
-        background: red;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .logout {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #ccc;
-        padding: 15px 25px;
-        border-radius: 20px;
-        color: red;
-        font-weight: bold;
-        text-decoration: none;
-    }
-</style>
-
-<div class="header">DATA BUKU</div>
-
-<div class="container">
-
-   <a href="{{ route('bukupetugas.create') }}" class="btn-tambah">+ Tambah Buku</a>
-   
-    <table>
-        <tr>
-            <th>Judul</th>
-            <th>Kategori</th>
-            <th>Penulis</th>
-            <th>Penerbit</th>
-            <th>Tahun</th>
-            <th>Stok</th>
-            <th>Aksi</th>
+<table style="width:100%; border-collapse:collapse;">
+    <thead>
+        <tr style="background:#b57ba6; color:white;">
+            <th style="padding:12px;">Cover</th>
+            <th style="padding:12px;">Judul</th>
+            <th style="padding:12px;">Kategori</th>
+            <th style="padding:12px;">Penulis</th>
+            <th style="padding:12px;">Penerbit</th>
+            <th style="padding:12px;">Tahun</th>
+            <th style="padding:12px;">Stok</th>
+            <th style="padding:12px;">Aksi</th>
         </tr>
-
-        @foreach($buku as $b)
-        <tr>
-            <td>{{ $b->judul }}</td>
-            <td>{{ $b->kategori }}</td>
-            <td>{{ $b->penulis }}</td>
-            <td>{{ $b->penerbit }}</td>
-            <td>{{ $b->tahun }}</td>
-            <td>{{ $b->stok }}</td>
-            <td>
-                <a href="{{ route('bukupetugas.edit', $b->id) }}" class="btn-edit">Edit</a>
-
-                <form action="{{ route('bukupetugas.destroy', $b->id) }}" method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn-hapus">Hapus</button>
+    </thead>
+    <tbody>
+        @forelse($buku as $b)
+        <tr style="background:#f9f9f9; text-align:center; border-bottom:1px solid #eee;">
+            <td style="padding:8px;">
+                @if($b->cover)
+                    <img src="{{ asset('storage/' . $b->cover) }}" alt="cover"
+                         style="width:50px; height:65px; object-fit:cover; border-radius:4px; border:1px solid #ddd;">
+                @else
+                    <span style="color:#ccc; font-size:12px;">-</span>
+                @endif
+            </td>
+            <td style="padding:10px; text-align:left;">{{ $b->judul }}</td>
+            <td style="padding:10px;">{{ $b->kategori ?? '-' }}</td>
+            <td style="padding:10px;">{{ $b->penulis ?? '-' }}</td>
+            <td style="padding:10px;">{{ $b->penerbit }}</td>
+            <td style="padding:10px;">{{ $b->tahun ?? '-' }}</td>
+            <td style="padding:10px;">{{ $b->stok ?? $b->jumlah }}</td>
+            <td style="padding:10px;">
+                <a href="{{ route('petugas.bukupetugas.edit', $b->id) }}"
+                   style="background:#f0ad4e; color:white; padding:5px 10px; text-decoration:none; border-radius:5px; font-size:12px;">Edit</a>
+                <form action="{{ route('petugas.bukupetugas.destroy', $b->id) }}" method="POST" style="display:inline;"
+                      onsubmit="return confirm('Hapus buku ini?')">
+                    @csrf @method('DELETE')
+                    <button style="background:red; color:white; padding:5px 10px; border:none; border-radius:5px; cursor:pointer; font-size:12px;">Hapus</button>
                 </form>
             </td>
         </tr>
-        @endforeach
-    </table>
-
-</div>
-
-<a href="/logout" class="logout">LOGOUT</a>
+        @empty
+        <tr><td colspan="8" style="padding:15px; text-align:center; color:#999;">Belum ada data buku.</td></tr>
+        @endforelse
+    </tbody>
+</table>
 
 @endsection

@@ -16,6 +16,12 @@ class Peminjaman extends Model
         'anggota_id',
         'tgl_pinjam',
         'tgl_kembali',
+        'tgl_jatuh_tempo',
         'status',
     ];
+
+    public function anggota()
+    {
+        return $this->belongsTo(User::class, 'anggota_id');
+    }
 }

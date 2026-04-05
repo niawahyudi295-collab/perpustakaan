@@ -21,6 +21,32 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
+    // ================= REGISTER (Anggota only)
+    public function register(Request $request)
+    {
+        $request->validate([
+            'username'          => 'required|string|max:50|unique:users',
+            'name'              => 'required|string|max:255',
+            'email'             => 'required|email|unique:users',
+            'password'          => 'required|min:6|confirmed',
+        ], [
+            'username.unique'   => 'Username sudah digunakan.',
+            'email.unique'      => 'Email sudah terdaftar.',
+            'password.confirmed'=> 'Konfirmasi password tidak cocok.',
+            'password.min'      => 'Password minimal 6 karakter.',
+        ]);
+
+        User::create([
+            'username' => $request->username,
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => 'anggota',
+        ]);
+
+        return redirect('/login')->with('success', 'Akun berhasil dibuat, silakan login.');
+    }
+
     // ================= LOGIN
     public function login(Request $request)
 {
@@ -33,11 +59,11 @@ class AuthController extends Controller
         $user = Auth::user();
 
         if ($user->role == 'anggota') {
-            return redirect('/anggota/dashboard');
+            return redirect()->route('anggota.dashboard');
         } elseif ($user->role == 'petugas') {
-            return redirect('/petugas/dashboard');
+            return redirect()->route('petugas.dashboard');
         } elseif ($user->role == 'kepala') {
-            return redirect('/kepala/dashboard');
+            return redirect()->route('kepala.dashboard');
         }
 
         

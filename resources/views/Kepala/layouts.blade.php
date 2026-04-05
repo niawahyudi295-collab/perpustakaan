@@ -2,50 +2,56 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandPink: '#cc7dae',
-                        bgSoftPink: '#f8ebf1',
-                    }
-                }
-            }
-        }
-    </script>
+    <title>@yield('title') - Perpustakaan</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
+<body class="bg-white min-h-screen">
 
-<div class="flex">
+<div class="flex min-h-screen">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 bg-pink-800 min-h-screen p-5 text-white">
-        <h3 class="text-center font-bold mb-6">System Perpustakaan</h3>
-
-        <a href="#" class="block bg-gray-200 text-black p-3 mb-3 rounded">👥 Data Petugas</a>
-        <a href="#" class="block bg-gray-200 text-black p-3 mb-3 rounded">📖 Katalog</a>
-        <a href="#" class="block bg-gray-200 text-black p-3 rounded">📜 Laporan</a>
+    <aside class="w-64 min-h-screen flex flex-col" style="background-color: #eeeeee;">
+        <div class="px-5 py-6">
+            <h3 class="font-bold text-base mb-6 text-gray-800">
+                {{ Auth::user()->name }}<br>
+                <span class="text-gray-500 text-sm font-normal">({{ ucfirst(Auth::user()->role) }})</span>
+            </h3>
+            <nav class="space-y-2">
+                <a href="{{ route('kepala.petugas.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded text-sm text-gray-700 hover:bg-gray-300 transition {{ request()->routeIs('kepala.petugas*') ? 'bg-gray-300 font-semibold' : 'bg-white' }}">
+                    <span>👥</span> Data Petugas
+                </a>
+                <a href="{{ route('kepala.anggota.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded text-sm text-gray-700 hover:bg-gray-300 transition {{ request()->routeIs('kepala.anggota*') ? 'bg-gray-300 font-semibold' : 'bg-white' }}">
+                    <span>👤</span> Daftar Anggota
+                </a>
+                <a href="{{ route('kepala.katalog') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded text-sm text-gray-700 hover:bg-gray-300 transition {{ request()->routeIs('kepala.katalog') ? 'bg-gray-300 font-semibold' : 'bg-white' }}">
+                    <span>📖</span> Katalog Buku
+                </a>
+                <a href="{{ route('kepala.laporan') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded text-sm text-gray-700 hover:bg-gray-300 transition {{ request()->routeIs('kepala.laporan*') ? 'bg-gray-300 font-semibold' : 'bg-white' }}">
+                    <span>📋</span> Laporan
+                </a>
+            </nav>
+        </div>
+        <div class="mt-auto px-5 py-6">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="text-red-500 text-sm hover:underline">Logout</button>
+            </form>
+        </div>
     </aside>
 
     <!-- MAIN -->
-    <div class="flex-1">
-
-        <!-- HEADER -->
-        <div class="bg-brandPink text-white text-center p-5 text-2xl font-bold">
+    <div class="flex-1 flex flex-col">
+        <div class="text-white text-center py-5 text-2xl font-bold" style="background-color: #b57ba6;">
             @yield('header')
         </div>
-
-        <!-- CONTENT -->
-        <div class="p-6 bg-bgSoftPink min-h-screen">
+        <div class="flex-1 p-8 bg-white">
             @yield('content')
         </div>
-
     </div>
-
 </div>
 
 </body>
