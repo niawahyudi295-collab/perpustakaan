@@ -36,7 +36,7 @@
         <tr style="background:#f9f9f9; text-align:center; border-bottom:1px solid #eee;">
             <td style="padding:8px;">
                 @if($b->cover)
-                    <img src="{{ asset('storage/' . $b->cover) }}" alt="cover"
+                    <img src="{{ asset('images/' . $b->cover) }}" alt="cover"
                          style="width:50px; height:65px; object-fit:cover; border-radius:4px; border:1px solid #ddd;">
                 @else
                     <span style="color:#ccc; font-size:12px;">-</span>

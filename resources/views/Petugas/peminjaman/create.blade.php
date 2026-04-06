@@ -44,12 +44,6 @@
                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;" required>
         </div>
 
-        <div style="margin-bottom:20px;">
-            <label style="display:block; font-weight:bold; margin-bottom:5px;">Tanggal Kembali</label>
-            <input type="date" name="tgl_kembali" value="{{ old('tgl_kembali') }}"
-                   style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;" required>
-        </div>
-
         <div style="display:flex; gap:10px;">
             <button type="submit"
                     style="flex:1; padding:10px; background:#b57ba6; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">

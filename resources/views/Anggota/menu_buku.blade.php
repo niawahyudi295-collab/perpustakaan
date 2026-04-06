@@ -21,7 +21,7 @@
         {{-- Cover --}}
         <div class="flex-shrink-0">
             @if($b->cover)
-                <img src="{{ asset('storage/' . $b->cover) }}" alt="{{ $b->judul }}"
+                <img src="{{ asset('images/' . $b->cover) }}" alt="{{ $b->judul }}"
                      class="rounded-lg object-cover"
                      style="width:110px; height:150px; object-fit:cover;">
             @else

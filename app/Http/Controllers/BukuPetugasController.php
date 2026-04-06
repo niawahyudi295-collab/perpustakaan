@@ -23,7 +23,7 @@ class BukuPetugasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'judul'    => 'required',
+            'judul'    => 'required|unique:buku,judul',
             'kategori' => 'required',
             'penulis'  => 'required',
             'penerbit' => 'required',
@@ -32,18 +32,20 @@ class BukuPetugasController extends Controller
             'cover'    => 'required|image|max:2048',
         ]);
 
-        $coverPath = $request->file('cover')->store('covers', 'public');
+        $file     = $request->file('cover');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('images'), $filename);
 
         Buku::create([
-            'judul'    => $request->judul,
-            'kategori' => $request->kategori,
-            'penulis'  => $request->penulis,
-            'pengarang'=> $request->penulis,
-            'penerbit' => $request->penerbit,
-            'tahun'    => $request->tahun,
-            'stok'     => $request->stok,
-            'jumlah'   => $request->stok, 
-            'cover'    => $coverPath,
+            'judul'     => $request->judul,
+            'kategori'  => $request->kategori,
+            'penulis'   => $request->penulis,
+            'pengarang' => $request->penulis,
+            'penerbit'  => $request->penerbit,
+            'tahun'     => $request->tahun,
+            'stok'      => $request->stok,
+            'jumlah'    => $request->stok,
+            'cover'     => $filename,
         ]);
 
         return redirect()->route('petugas.bukupetugas.index')->with('success', 'Buku berhasil ditambahkan.');
@@ -61,7 +63,7 @@ class BukuPetugasController extends Controller
         $buku = Buku::findOrFail($id);
 
         $request->validate([
-            'judul'    => 'required',
+            'judul'    => 'required|unique:buku,judul,' . $id,
             'kategori' => 'required',
             'penulis'  => 'required',
             'penerbit' => 'required',
@@ -76,9 +78,13 @@ class BukuPetugasController extends Controller
 
         if ($request->hasFile('cover')) {
             if ($buku->cover) {
-                \Storage::disk('public')->delete($buku->cover);
+                $oldPath = public_path('images/' . $buku->cover);
+                if (file_exists($oldPath)) unlink($oldPath);
             }
-            $data['cover'] = $request->file('cover')->store('covers', 'public');
+            $file     = $request->file('cover');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $data['cover'] = $filename;
         }
 
         $buku->update($data);
@@ -89,7 +95,8 @@ class BukuPetugasController extends Controller
     {
         $buku = Buku::findOrFail($id);
         if ($buku->cover) {
-            \Storage::disk('public')->delete($buku->cover);
+            $oldPath = public_path('images/' . $buku->cover);
+            if (file_exists($oldPath)) unlink($oldPath);
         }
         $buku->delete();
         return redirect()->route('petugas.bukupetugas.index')->with('success', 'Buku berhasil dihapus.');

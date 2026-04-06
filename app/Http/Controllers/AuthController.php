@@ -28,6 +28,8 @@ class AuthController extends Controller
             'username'          => 'required|string|max:50|unique:users',
             'name'              => 'required|string|max:255',
             'email'             => 'required|email|unique:users',
+            'phone_number'      => 'required|string|max:20',
+            'alamat'            => 'required|string|max:500',
             'password'          => 'required|min:6|confirmed',
         ], [
             'username.unique'   => 'Username sudah digunakan.',
@@ -37,11 +39,13 @@ class AuthController extends Controller
         ]);
 
         User::create([
-            'username' => $request->username,
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => 'anggota',
+            'username'     => $request->username,
+            'name'         => $request->name,
+            'email'        => $request->email,
+            'phone_number' => $request->phone_number,
+            'alamat'       => $request->alamat,
+            'password'     => Hash::make($request->password),
+            'role'         => 'anggota',
         ]);
 
         return redirect('/login')->with('success', 'Akun berhasil dibuat, silakan login.');

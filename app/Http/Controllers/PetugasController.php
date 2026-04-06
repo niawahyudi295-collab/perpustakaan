@@ -14,10 +14,12 @@ class PetugasController extends Controller
     {
         $peminjaman = Peminjaman::where('status', 'dipinjam')->count();
         $terlambat  = Peminjaman::where('status', 'dipinjam')
-                        ->where('tgl_kembali', '<', now()->toDateString())
+                        ->whereNotNull('tgl_jatuh_tempo')
+                        ->where('tgl_jatuh_tempo', '<', now()->toDateString())
                         ->count();
+        $mengembalikan = Peminjaman::where('status', 'mengembalikan')->count();
 
-        return view('petugas.dashboard', compact('peminjaman', 'terlambat'));
+        return view('petugas.dashboard', compact('peminjaman', 'terlambat', 'mengembalikan'));
     }
 
     // ===== DAFTAR ANGGOTA =====
@@ -27,6 +29,30 @@ class PetugasController extends Controller
         return view('petugas.anggota', compact('anggota'));
     }
 
+    public function editAnggota(User $user)
+    {
+        return view('petugas.anggota_edit', compact('user'));
+    }
+
+    public function updateAnggota(Request $request, User $user)
+    {
+        $request->validate([
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:users,email,' . $user->id,
+            'phone_number' => 'nullable|string|max:20',
+            'alamat'       => 'nullable|string|max:500',
+        ]);
+
+        $user->update($request->only('name', 'email', 'phone_number', 'alamat'));
+        return redirect()->route('petugas.anggota')->with('success', 'Data anggota berhasil diperbarui.');
+    }
+
+    public function destroyAnggota(User $user)
+    {
+        $user->delete();
+        return redirect()->route('petugas.anggota')->with('success', 'Anggota berhasil dihapus.');
+    }
+
     // ===== PEMINJAMAN =====
     public function peminjaman()
     {
@@ -34,16 +60,102 @@ class PetugasController extends Controller
         return view('petugas.peminjaman.index', compact('peminjaman'));
     }
 
+    public function createPeminjaman()
+    {
+        $anggota = User::where('role', 'anggota')->get();
+        $buku    = Buku::where('stok', '>', 0)->get();
+        return view('petugas.peminjaman.create', compact('anggota', 'buku'));
+    }
+
+    public function storePeminjaman(Request $request)
+    {
+        $request->validate([
+            'anggota_id' => 'required|exists:users,id',
+            'judul_buku' => 'required|string',
+            'tgl_pinjam' => 'required|date',
+        ]);
+
+        Peminjaman::create([
+            'anggota_id' => $request->anggota_id,
+            'judul_buku' => $request->judul_buku,
+            'tgl_pinjam' => $request->tgl_pinjam,
+            'status'     => 'menunggu',
+        ]);
+
+        return redirect()->route('petugas.peminjaman')->with('success', 'Peminjaman berhasil ditambahkan.');
+    }
+
     public function kembalikan(Peminjaman $peminjaman)
     {
-        $peminjaman->update(['status' => 'dikembalikan']);
-        return redirect()->route('petugas.peminjaman')->with('success', 'Buku berhasil dikembalikan.');
+        $tglKembali    = now()->toDateString();
+        $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
+        $hariTerlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
+        $denda         = $hariTerlambat * 5000;
+
+        $peminjaman->update([
+            'status'     => 'dikembalikan',
+            'tgl_kembali' => $tglKembali,
+            'denda'      => $denda,
+        ]);
+        return redirect()->route('petugas.peminjaman')->with('success', 'Pengembalian buku berhasil dikonfirmasi.');
     }
 
     public function konfirmasi(Peminjaman $peminjaman)
     {
-        $peminjaman->update(['status' => 'dipinjam']);
+        $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_pinjam)->addDays(5)->toDateString();
+        $peminjaman->update([
+            'status'         => 'dipinjam',
+            'tgl_jatuh_tempo' => $tglJatuhTempo,
+        ]);
         return redirect()->route('petugas.peminjaman')->with('success', 'Peminjaman berhasil dikonfirmasi.');
+    }
+
+    public function konfirmasiKembali(Peminjaman $peminjaman)
+    {
+        $tglKembali    = now()->toDateString();
+        $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
+        $hariTerlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
+        $denda         = $hariTerlambat * 5000;
+
+        $peminjaman->update([
+            'status'      => 'dikembalikan',
+            'tgl_kembali' => $tglKembali,
+            'denda'       => $denda,
+        ]);
+
+        Buku::where('judul', $peminjaman->judul_buku)->increment('stok');
+
+        return redirect()->route('petugas.peminjaman')->with('success', 'Pengembalian buku berhasil dikonfirmasi.');
+    }
+
+    public function editPeminjaman(Peminjaman $peminjaman)
+    {
+        $anggota = User::where('role', 'anggota')->get();
+        $buku    = Buku::where('stok', '>', 0)->get();
+        return view('petugas.peminjaman.edit', compact('peminjaman', 'anggota', 'buku'));
+    }
+
+    public function updatePeminjaman(Request $request, Peminjaman $peminjaman)
+    {
+        $request->validate([
+            'anggota_id'  => 'required|exists:users,id',
+            'judul_buku'  => 'required|string',
+            'tgl_pinjam'  => 'required|date',
+            'status'      => 'required|in:menunggu,dipinjam,mengembalikan,dikembalikan',
+        ]);
+
+        $peminjaman->update($request->only('anggota_id', 'judul_buku', 'tgl_pinjam', 'tgl_jatuh_tempo', 'tgl_kembali', 'status', 'denda'));
+        return redirect()->route('petugas.peminjaman')->with('success', 'Data peminjaman berhasil diperbarui.');
+    }
+
+    public function destroyPeminjaman(Peminjaman $peminjaman)
+    {
+        // Kembalikan stok jika buku belum dikembalikan
+        if (in_array($peminjaman->status, ['dipinjam', 'mengembalikan'])) {
+            Buku::where('judul', $peminjaman->judul_buku)->increment('stok');
+        }
+        $peminjaman->delete();
+        return redirect()->route('petugas.peminjaman')->with('success', 'Data peminjaman berhasil dihapus.');
     }
 
     // ===== KATEGORI CRUD =====

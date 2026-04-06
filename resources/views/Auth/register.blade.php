@@ -140,6 +140,16 @@
             </div>
 
             <div class="input-group">
+                <input type="text" name="phone_number" placeholder="No. Telepon"
+                       value="{{ old('phone_number') }}" required>
+            </div>
+
+            <div class="input-group">
+                <input type="text" name="alamat" placeholder="Alamat"
+                       value="{{ old('alamat') }}" required>
+            </div>
+
+            <div class="input-group">
                 <input type="password" name="password" placeholder="Password" required>
             </div>
 

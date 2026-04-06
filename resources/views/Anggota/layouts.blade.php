@@ -16,6 +16,11 @@
                 Perpustakaan<br>Digital
             </div>
             <nav class="space-y-1">
+                <a href="{{ route('anggota.dashboard') }}"
+                   class="flex items-center gap-3 px-3 py-3 rounded text-sm text-gray-700 hover:bg-gray-100 transition {{ request()->routeIs('anggota.dashboard') ? 'bg-gray-100 font-semibold' : '' }}">
+                    <span class="text-lg">🏠</span>
+                    <span style="color:#b57ba6; font-weight:{{ request()->routeIs('anggota.dashboard') ? 'bold' : 'normal' }}">Dashboard</span>
+                </a>
                 <a href="{{ route('anggota.buku.index') }}"
                    class="flex items-center gap-3 px-3 py-3 rounded text-sm text-gray-700 hover:bg-gray-100 transition {{ request()->routeIs('anggota.buku*') ? 'bg-gray-100 font-semibold' : '' }}">
                     <span class="text-lg">📋</span>
@@ -23,10 +28,24 @@
                 </a>
                 <a href="{{ route('anggota.peminjaman') }}"
                    class="flex items-center gap-3 px-3 py-3 rounded text-sm text-gray-700 hover:bg-gray-100 transition {{ request()->routeIs('anggota.peminjaman') ? 'bg-gray-100 font-semibold' : '' }}">
-                    <span class="text-lg">✏️</span>
+                    <span class="text-lg">📖</span>
                     <span style="color:#b57ba6; font-weight:{{ request()->routeIs('anggota.peminjaman') ? 'bold' : 'normal' }}">Peminjaman</span>
                 </a>
-        
+                <a href="{{ route('anggota.pengembalian') }}"
+                   class="flex items-center gap-3 px-3 py-3 rounded text-sm text-gray-700 hover:bg-gray-100 transition {{ request()->routeIs('anggota.pengembalian') ? 'bg-gray-100 font-semibold' : '' }}">
+                    <span class="text-lg">↩️</span>
+                    <span style="color:#b57ba6; font-weight:{{ request()->routeIs('anggota.pengembalian') ? 'bold' : 'normal' }}">Pengembalian</span>
+                </a>
+                <a href="{{ route('anggota.riwayat') }}"
+                   class="flex items-center gap-3 px-3 py-3 rounded text-sm text-gray-700 hover:bg-gray-100 transition {{ request()->routeIs('anggota.riwayat') ? 'bg-gray-100 font-semibold' : '' }}">
+                    <span class="text-lg">📜</span>
+                    <span style="color:#b57ba6; font-weight:{{ request()->routeIs('anggota.riwayat') ? 'bold' : 'normal' }}">Riwayat</span>
+                </a>
+                <a href="{{ route('anggota.profile') }}"
+                   class="flex items-center gap-3 px-3 py-3 rounded text-sm text-gray-700 hover:bg-gray-100 transition {{ request()->routeIs('anggota.profile') ? 'bg-gray-100 font-semibold' : '' }}">
+                    <span class="text-lg">👤</span>
+                    <span style="color:#b57ba6; font-weight:{{ request()->routeIs('anggota.profile') ? 'bold' : 'normal' }}">Profil</span>
+                </a>
             </nav>
         </div>
         <div class="px-4 py-5">

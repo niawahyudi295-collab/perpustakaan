@@ -63,7 +63,7 @@
             {{-- Cover saat ini --}}
             @if($buku->cover)
             <div style="margin-bottom:8px;">
-                <img src="{{ asset('storage/' . $buku->cover) }}" alt="Cover"
+                <img src="{{ asset('images/' . $buku->cover) }}" alt="Cover"
                      id="cover-preview"
                      style="width:120px; height:160px; object-fit:cover; border-radius:6px; border:1px solid #ddd;">
             </div>

@@ -40,6 +40,12 @@
                     @if($a->status === 'dipinjam')
                         <span class="text-gray-600"> meminjam </span>
                         <span class="font-semibold" style="color:#b57ba6;">{{ $a->judul_buku }}</span>
+                    @elseif($a->status === 'mengembalikan')
+                        <span class="text-gray-600"> mengajukan pengembalian </span>
+                        <span class="font-semibold text-blue-500">{{ $a->judul_buku }}</span>
+                    @elseif($a->status === 'menunggu')
+                        <span class="text-gray-600"> mengajukan pinjam </span>
+                        <span class="font-semibold text-purple-500">{{ $a->judul_buku }}</span>
                     @else
                         <span class="text-gray-600"> mengembalikan </span>
                         <span class="font-semibold text-green-600">{{ $a->judul_buku }}</span>
@@ -48,6 +54,10 @@
                 <div class="text-xs text-gray-400 flex-shrink-0">{{ $waktu }}</div>
                 @if($a->status === 'dipinjam')
                     <span style="background:#fff3cd; color:#856404; padding:2px 8px; border-radius:20px; font-size:11px;">Dipinjam</span>
+                @elseif($a->status === 'mengembalikan')
+                    <span style="background:#cce5ff; color:#004085; padding:2px 8px; border-radius:20px; font-size:11px;">Minta Kembali</span>
+                @elseif($a->status === 'menunggu')
+                    <span style="background:#e3d4f0; color:#6a1b9a; padding:2px 8px; border-radius:20px; font-size:11px;">Menunggu</span>
                 @else
                     <span style="background:#d4edda; color:#155724; padding:2px 8px; border-radius:20px; font-size:11px;">Dikembalikan</span>
                 @endif

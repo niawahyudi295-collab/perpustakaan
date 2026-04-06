@@ -39,7 +39,11 @@ Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->name('anggota.')
     Route::get('/buku/pinjam/{id}', [AnggotaController::class, 'formPinjam'])->name('buku.pinjam');
     Route::post('/buku/pinjam', [AnggotaController::class, 'storePinjam'])->name('buku.pinjam.store');
     Route::get('/peminjaman', [AnggotaController::class, 'peminjaman'])->name('peminjaman');
+    Route::get('/pengembalian', [AnggotaController::class, 'pengembalian'])->name('pengembalian');
+    Route::get('/riwayat', [AnggotaController::class, 'riwayat'])->name('riwayat');
     Route::patch('/peminjaman/{peminjaman}/kembalikan', [AnggotaController::class, 'kembalikan'])->name('peminjaman.kembalikan');
+    Route::get('/profile', [AnggotaController::class, 'profile'])->name('profile');
+    Route::put('/profile', [AnggotaController::class, 'updateProfile'])->name('profile.update');
 });
 
 // =====================
@@ -48,9 +52,18 @@ Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->name('anggota.')
 Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')->group(function () {
     Route::get('/dashboard', [PetugasController::class, 'dashboard'])->name('dashboard');
     Route::get('/anggota', [PetugasController::class, 'anggota'])->name('anggota');
+    Route::get('/anggota/{user}/edit', [PetugasController::class, 'editAnggota'])->name('anggota.edit');
+    Route::put('/anggota/{user}', [PetugasController::class, 'updateAnggota'])->name('anggota.update');
+    Route::delete('/anggota/{user}', [PetugasController::class, 'destroyAnggota'])->name('anggota.destroy');
     Route::get('/peminjaman', [PetugasController::class, 'peminjaman'])->name('peminjaman');
+    Route::get('/peminjaman/create', [PetugasController::class, 'createPeminjaman'])->name('peminjaman.create');
+    Route::post('/peminjaman', [PetugasController::class, 'storePeminjaman'])->name('peminjaman.store');
+    Route::get('/peminjaman/{peminjaman}/edit', [PetugasController::class, 'editPeminjaman'])->name('peminjaman.edit');
+    Route::put('/peminjaman/{peminjaman}', [PetugasController::class, 'updatePeminjaman'])->name('peminjaman.update');
+    Route::delete('/peminjaman/{peminjaman}', [PetugasController::class, 'destroyPeminjaman'])->name('peminjaman.destroy');
     Route::patch('/peminjaman/{peminjaman}/kembalikan', [PetugasController::class, 'kembalikan'])->name('peminjaman.kembalikan');
     Route::patch('/peminjaman/{peminjaman}/konfirmasi', [PetugasController::class, 'konfirmasi'])->name('peminjaman.konfirmasi');
+    Route::patch('/peminjaman/{peminjaman}/konfirmasi-kembali', [PetugasController::class, 'konfirmasiKembali'])->name('peminjaman.konfirmasi.kembali');
     Route::get('/kategori', [PetugasController::class, 'kategori'])->name('kategori');
     Route::post('/kategori', [PetugasController::class, 'storeKategori'])->name('kategori.store');
     Route::put('/kategori/{kategori}', [PetugasController::class, 'updateKategori'])->name('kategori.update');
