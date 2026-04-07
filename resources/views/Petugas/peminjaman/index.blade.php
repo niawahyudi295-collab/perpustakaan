@@ -71,8 +71,18 @@
                     <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:12px;">✅ Dikembalikan</span>
                 @endif
             </td>
-            <td style="padding:10px; color:{{ $p->denda > 0 ? 'red' : '#555' }}; font-weight:{{ $p->denda > 0 ? 'bold' : 'normal' }};">
-                {{ $p->denda > 0 ? 'Rp '.number_format($p->denda,0,',','.') : '-' }}
+            <td style="padding:10px; text-align:center;">
+                <span id="denda-label-{{ $p->id }}" style="color:{{ $p->denda > 0 ? 'red' : '#555' }}; font-weight:{{ $p->denda > 0 ? 'bold' : 'normal' }}; cursor:pointer;" onclick="showDendaEdit({{ $p->id }}, {{ $p->denda }})" title="Klik untuk ubah denda">
+                    {{ $p->denda > 0 ? 'Rp '.number_format($p->denda,0,',','.') : '-' }} ✏️
+                </span>
+                <form id="denda-form-{{ $p->id }}" action="{{ route('petugas.peminjaman.update.denda', $p) }}" method="POST" style="display:none; gap:4px; align-items:center; justify-content:center;">
+                    @csrf @method('PATCH')
+                    <input type="number" name="denda" id="denda-input-{{ $p->id }}" min="0" step="1000"
+                           style="width:90px; padding:4px 6px; border:1px solid #ccc; border-radius:5px; font-size:12px;">
+                    <button type="submit" style="background:#5cb85c;color:white;padding:4px 8px;border:none;border-radius:4px;cursor:pointer;font-size:11px;">✓</button>
+                    <button type="button" onclick="hideDendaEdit({{ $p->id }})"
+                            style="background:#aaa;color:white;padding:4px 8px;border:none;border-radius:4px;cursor:pointer;font-size:11px;">✕</button>
+                </form>
             </td>
             <td style="padding:10px;">
                 @if($p->status === 'menunggu')
@@ -114,3 +124,16 @@
 </table>
 
 @endsection
+
+<script>
+function showDendaEdit(id, current) {
+    document.getElementById('denda-label-' + id).style.display = 'none';
+    const form = document.getElementById('denda-form-' + id);
+    form.style.display = 'flex';
+    document.getElementById('denda-input-' + id).value = current;
+}
+function hideDendaEdit(id) {
+    document.getElementById('denda-label-' + id).style.display = 'inline';
+    document.getElementById('denda-form-' + id).style.display = 'none';
+}
+</script>

@@ -8,10 +8,13 @@
 <div class="mb-4 flex justify-between items-center">
     <a href="{{ route('kepala.laporan') }}"
        class="text-sm text-gray-500 hover:underline">← Kembali ke Laporan</a>
-    <a href="{{ route('kepala.laporan.pdf', $peminjaman->id) }}"
-       style="background:#b57ba6; color:white; padding:8px 20px; border-radius:6px; text-decoration:none; font-size:14px; font-weight:bold;">
-        🖨️ Cetak PDF
-    </a>
+    <div class="flex items-center gap-3">
+        <span class="text-xs text-gray-400">Dilihat: {{ now()->format('d F Y, H:i:s') }} WIB</span>
+        <a href="{{ route('kepala.laporan.pdf', $peminjaman->id) }}"
+           style="background:#b57ba6; color:white; padding:8px 20px; border-radius:6px; text-decoration:none; font-size:14px; font-weight:bold;">
+            🖨️ Cetak PDF
+        </a>
+    </div>
 </div>
 
 <div class="bg-white rounded-xl shadow p-8 max-w-2xl">

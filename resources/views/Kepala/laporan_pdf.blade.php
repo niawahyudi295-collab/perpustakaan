@@ -63,7 +63,7 @@
 
 <div class="header">
     <h1>LAPORAN PEMINJAMAN BUKU</h1>
-    <p>Perpustakaan Digital &nbsp;|&nbsp; Dicetak: {{ now()->format('d F Y, H:i') }}</p>
+    <p>Perpustakaan Digital &nbsp;|&nbsp; Dicetak: {{ now()->format('d F Y, H:i:s') }} WIB</p>
 </div>
 
 <div class="section-title">Data Anggota</div>

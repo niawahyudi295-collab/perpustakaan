@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Peminjaman;
 use App\Models\User;
 use App\Models\Buku;
@@ -10,6 +11,38 @@ use App\Models\Kategori;
 
 class PetugasController extends Controller
 {
+    public function profile()
+    {
+        return view('petugas.profile', ['user' => Auth::user()]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:users,email,' . $user->id,
+            'phone_number' => 'nullable|string|max:20',
+            'foto'         => 'nullable|image|max:2048',
+        ]);
+
+        $data = $request->only('name', 'email', 'phone_number');
+
+        if ($request->hasFile('foto')) {
+            if ($user->foto) {
+                $old = public_path('images/' . $user->foto);
+                if (file_exists($old)) unlink($old);
+            }
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $data['foto'] = $filename;
+        }
+
+        $user->update($data);
+        return redirect()->route('petugas.profile')->with('success', 'Profil berhasil diperbarui.');
+    }
+
     public function dashboard()
     {
         $peminjaman = Peminjaman::where('status', 'dipinjam')->count();
@@ -158,6 +191,13 @@ class PetugasController extends Controller
         return redirect()->route('petugas.peminjaman')->with('success', 'Data peminjaman berhasil dihapus.');
     }
 
+    public function updateDenda(Request $request, Peminjaman $peminjaman)
+    {
+        $request->validate(['denda' => 'required|integer|min:0']);
+        $peminjaman->update(['denda' => $request->denda]);
+        return redirect()->route('petugas.peminjaman')->with('success', 'Denda berhasil diperbarui.');
+    }
+
     // ===== KATEGORI CRUD =====
     public function kategori()
     {
@@ -167,14 +207,18 @@ class PetugasController extends Controller
 
     public function storeKategori(Request $request)
     {
-        $request->validate(['nama' => 'required|string|unique:kategoris,nama']);
+        $request->validate(['nama' => 'required|string|unique:kategoris,nama'], [
+            'nama.unique' => 'Nama kategori sudah ada.',
+        ]);
         Kategori::create(['nama' => $request->nama]);
         return redirect()->route('petugas.kategori')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
     public function updateKategori(Request $request, Kategori $kategori)
     {
-        $request->validate(['nama' => 'required|string|unique:kategoris,nama,' . $kategori->id]);
+        $request->validate(['nama' => 'required|string|unique:kategoris,nama,' . $kategori->id], [
+            'nama.unique' => 'Nama kategori sudah ada.',
+        ]);
         $kategori->update(['nama' => $request->nama]);
         return redirect()->route('petugas.kategori')->with('success', 'Kategori berhasil diperbarui.');
     }

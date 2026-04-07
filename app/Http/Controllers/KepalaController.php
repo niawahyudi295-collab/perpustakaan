@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Buku;
 use App\Models\Peminjaman;
@@ -11,6 +12,38 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class KepalaController extends Controller
 {
+    public function profile()
+    {
+        return view('Kepala.profile', ['user' => Auth::user()]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:users,email,' . $user->id,
+            'phone_number' => 'nullable|string|max:20',
+            'foto'         => 'nullable|image|max:2048',
+        ]);
+
+        $data = $request->only('name', 'email', 'phone_number');
+
+        if ($request->hasFile('foto')) {
+            if ($user->foto) {
+                $old = public_path('images/' . $user->foto);
+                if (file_exists($old)) unlink($old);
+            }
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $data['foto'] = $filename;
+        }
+
+        $user->update($data);
+        return redirect()->route('kepala.profile')->with('success', 'Profil berhasil diperbarui.');
+    }
+
     public function dashboard()
     {
         return view('Kepala.dashboard');

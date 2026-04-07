@@ -59,6 +59,33 @@
             color: white;
             font-size: 28px;
             font-weight: bold;
+            position: relative;
+        }
+        .header-profile {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+        }
+        .header-profile img, .header-profile .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        .header-profile .avatar {
+            background: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
         }
         .content {
             margin-left: 230px;
@@ -78,6 +105,7 @@
             <a href="{{ route('petugas.anggota') }}" class="{{ request()->routeIs('petugas.anggota') ? 'active' : '' }}">👤 Daftar Anggota</a>
             <a href="{{ route('petugas.peminjaman') }}" class="{{ request()->routeIs('petugas.peminjaman*') ? 'active' : '' }}">📥 Peminjaman</a>
             <a href="{{ route('petugas.kategori') }}" class="{{ request()->routeIs('petugas.kategori') ? 'active' : '' }}">📄 Kategori</a>
+            <a href="{{ route('petugas.profile') }}" class="{{ request()->routeIs('petugas.profile') ? 'active' : '' }}">👤 Profil</a>
         </div>
     </div>
     <div class="sidebar-footer">
@@ -88,7 +116,17 @@
     </div>
 </div>
 
-<div class="header">@yield('header')</div>
+<div class="header">
+    @yield('header')
+    <a href="{{ route('petugas.profile') }}" class="header-profile">
+        @if(Auth::user()->foto)
+            <img src="{{ asset('images/' . Auth::user()->foto) }}" alt="foto">
+        @else
+            <div class="avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+        @endif
+        <span style="font-size:13px;">{{ Auth::user()->name }}</span>
+    </a>
+</div>
 <div class="content">@yield('content')</div>
 
 </body>

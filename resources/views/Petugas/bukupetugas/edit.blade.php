@@ -34,7 +34,7 @@
         </div>
 
         <div style="margin-bottom:14px;">
-            <label style="font-weight:bold; display:block; margin-bottom:5px;">Penulis</label>
+            <label style="font-weight:bold; display:block; margin-bottom:5px;">Pengarang</label>
             <input type="text" name="penulis" value="{{ old('penulis', $buku->penulis) }}"
                    style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; box-sizing:border-box;" required>
         </div>

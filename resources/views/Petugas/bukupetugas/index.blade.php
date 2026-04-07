@@ -24,7 +24,7 @@
             <th style="padding:12px;">Cover</th>
             <th style="padding:12px;">Judul</th>
             <th style="padding:12px;">Kategori</th>
-            <th style="padding:12px;">Penulis</th>
+            <th style="padding:12px;">Pengarang</th>
             <th style="padding:12px;">Penerbit</th>
             <th style="padding:12px;">Tahun</th>
             <th style="padding:12px;">Stok</th>
@@ -44,7 +44,7 @@
             </td>
             <td style="padding:10px; text-align:left;">{{ $b->judul }}</td>
             <td style="padding:10px;">{{ $b->kategori ?? '-' }}</td>
-            <td style="padding:10px;">{{ $b->penulis ?? '-' }}</td>
+            <td style="padding:10px;">{{ $b->pengarang ?? '-' }}</td>
             <td style="padding:10px;">{{ $b->penerbit }}</td>
             <td style="padding:10px;">{{ $b->tahun ?? '-' }}</td>
             <td style="padding:10px;">{{ $b->stok ?? $b->jumlah }}</td>

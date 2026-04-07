@@ -58,8 +58,18 @@
 
     <!-- MAIN -->
     <div class="flex-1 flex flex-col">
-        <div class="text-white text-center py-5 text-2xl font-bold" style="background-color: #b57ba6;">
+        <div class="text-white text-center py-5 text-2xl font-bold relative" style="background-color: #b57ba6;">
             @yield('header')
+            <a href="{{ route('anggota.profile') }}" class="absolute right-5 top-1/2 flex items-center gap-2" style="transform:translateY(-50%); text-decoration:none; color:white;">
+                @if(Auth::user()->foto)
+                    <img src="{{ asset('images/' . Auth::user()->foto) }}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid white;">
+                @else
+                    <div style="width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.3); border:2px solid white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:16px;">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                @endif
+                <span style="font-size:13px;">{{ Auth::user()->name }}</span>
+            </a>
         </div>
         <div class="flex-1 p-6 bg-[#f5e8f0]">
             @yield('content')
