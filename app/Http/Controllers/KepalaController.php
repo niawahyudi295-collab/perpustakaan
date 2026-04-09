@@ -25,9 +25,18 @@ class KepalaController extends Controller
             'email'        => 'required|email|unique:users,email,' . $user->id,
             'phone_number' => 'nullable|string|max:20',
             'foto'         => 'nullable|image|max:2048',
+            'password'     => 'nullable|min:6|confirmed',
+        ], [
+            'email.unique'        => 'Email sudah digunakan oleh akun lain.',
+            'password.min'        => 'Password minimal 6 karakter.',
+            'password.confirmed'  => 'Konfirmasi password tidak cocok.',
         ]);
 
         $data = $request->only('name', 'email', 'phone_number');
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
 
         if ($request->hasFile('foto')) {
             if ($user->foto) {
@@ -46,7 +55,17 @@ class KepalaController extends Controller
 
     public function dashboard()
     {
-        return view('Kepala.dashboard');
+        $totalAnggota  = User::where('role', 'anggota')->count();
+        $totalPetugas  = User::where('role', 'petugas')->count();
+        $totalBuku     = Buku::count();
+        $totalPinjam   = Peminjaman::whereIn('status', ['dipinjam', 'mengembalikan'])->count();
+        $totalTerlambat = Peminjaman::where('status', 'dipinjam')
+                            ->whereNotNull('tgl_jatuh_tempo')
+                            ->where('tgl_jatuh_tempo', '<', now()->toDateString())
+                            ->count();
+        $totalDenda    = Peminjaman::sum('denda');
+        $transaksiTerbaru = Peminjaman::with('anggota')->orderByDesc('created_at')->limit(5)->get();
+        return view('Kepala.dashboard', compact('totalAnggota', 'totalPetugas', 'totalBuku', 'totalPinjam', 'totalTerlambat', 'totalDenda', 'transaksiTerbaru'));
     }
 
     public function katalog()
@@ -78,6 +97,8 @@ class KepalaController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
+        ], [
+            'email.unique' => 'Email sudah digunakan oleh akun lain.',
         ]);
 
         User::create([
@@ -147,6 +168,14 @@ class KepalaController extends Controller
         $peminjaman->load('anggota');
 
         return view('Kepala.laporan_detail', compact('peminjaman'));
+    }
+
+    public function cetakPdfLaporan()
+    {
+        $data = Peminjaman::with('anggota')->orderByDesc('created_at')->get();
+        $pdf  = Pdf::loadView('Kepala.laporan_cetak_pdf', compact('data'))
+                   ->setPaper('a4', 'landscape');
+        return $pdf->download('laporan-peminjaman-' . now()->format('d-m-Y') . '.pdf');
     }
 
     public function cetakPdf(Peminjaman $peminjaman)

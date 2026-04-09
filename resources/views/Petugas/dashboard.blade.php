@@ -5,25 +5,104 @@
 
 @section('content')
 
-<div style="text-align:center; font-size:22px; margin-bottom:40px; color:#333;">
-    Hallo, Petugas Perpustakaan Digital
+{{-- Greeting --}}
+<div style="background: linear-gradient(135deg, #b57ba6, #d4a0c7); border-radius:16px; padding:24px 30px; margin-bottom:24px; color:white; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <div style="font-size:22px; font-weight:bold; margin-bottom:4px;">Halo, {{ Auth::user()->name }}! 👋</div>
+        <div style="font-size:13px; opacity:0.9;">{{ now()->format('l, d F Y') }} &nbsp;|&nbsp; Panel Petugas Perpustakaan</div>
+    </div>
+    <div style="font-size:60px; opacity:0.3;">🗂️</div>
 </div>
 
-<div style="display:flex; justify-content:space-around; flex-wrap:wrap; gap:20px;">
+{{-- Stat Cards --}}
+<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px;">
 
-    <a href="{{ route('petugas.peminjaman') }}" style="text-decoration:none; color:inherit;">
-        <div style="width:300px; background:#e7c6d3; padding:25px; border-radius:10px; cursor:pointer;">
-            <h3 style="margin-bottom:10px; font-size:16px;">Peminjaman Saat Ini</h3>
-            <p style="font-size:32px; font-weight:bold;">{{ $peminjaman }}</p>
-        </div>
-    </a>
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(181,123,166,0.15); border-left:5px solid #b57ba6;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Dipinjam</div>
+        <div style="font-size:36px; font-weight:bold; color:#b57ba6;">{{ $peminjaman }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">buku aktif dipinjam</div>
+    </div>
 
-    <a href="{{ route('petugas.peminjaman') }}" style="text-decoration:none; color:inherit;">
-        <div style="width:300px; background:#e7c6d3; padding:25px; border-radius:10px; cursor:pointer;">
-            <h3 style="margin-bottom:10px; font-size:16px;">Keterlambatan</h3>
-            <p style="font-size:32px; font-weight:bold;">{{ $terlambat }}</p>
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(255,193,7,0.15); border-left:5px solid #ffc107;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Menunggu</div>
+        <div style="font-size:36px; font-weight:bold; color:#ffc107;">{{ $menunggu }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">perlu dikonfirmasi</div>
+    </div>
+
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(229,57,53,0.15); border-left:5px solid #e53935;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Terlambat</div>
+        <div style="font-size:36px; font-weight:bold; color:#e53935;">{{ $terlambat }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">melewati jatuh tempo</div>
+    </div>
+
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(0,188,212,0.15); border-left:5px solid #00bcd4;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Minta Kembali</div>
+        <div style="font-size:36px; font-weight:bold; color:#00bcd4;">{{ $mengembalikan }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">menunggu konfirmasi</div>
+    </div>
+
+</div>
+
+{{-- Transaksi Terbaru & Aksi Cepat --}}
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
+
+    {{-- Transaksi Terbaru --}}
+    <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+        <div style="font-size:15px; font-weight:bold; color:#333; margin-bottom:16px;">📋 Transaksi Terbaru</div>
+        @forelse($transaksiTerbaru as $t)
+        <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #f5f5f5;">
+            <div style="width:36px; height:36px; border-radius:50%; background:#b57ba6; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:13px; flex-shrink:0;">
+                {{ strtoupper(substr($t->anggota->name ?? 'A', 0, 1)) }}
+            </div>
+            <div style="flex:1;">
+                <div style="font-size:13px; font-weight:600; color:#333;">{{ $t->anggota->name ?? '-' }}</div>
+                <div style="font-size:12px; color:#999;">{{ $t->judul_buku }}</div>
+            </div>
+            <div style="text-align:right;">
+                @if($t->status === 'menunggu')
+                    <span style="background:#e3d4f0; color:#6a1b9a; padding:3px 10px; border-radius:20px; font-size:11px;">Menunggu</span>
+                @elseif($t->status === 'dipinjam' && $t->hari_terlambat > 0)
+                    <span style="background:#f8d7da; color:#721c24; padding:3px 10px; border-radius:20px; font-size:11px;">Terlambat</span>
+                @elseif($t->status === 'dipinjam')
+                    <span style="background:#fff3cd; color:#856404; padding:3px 10px; border-radius:20px; font-size:11px;">Dipinjam</span>
+                @elseif($t->status === 'mengembalikan')
+                    <span style="background:#cce5ff; color:#004085; padding:3px 10px; border-radius:20px; font-size:11px;">Minta Kembali</span>
+                @else
+                    <span style="background:#d4edda; color:#155724; padding:3px 10px; border-radius:20px; font-size:11px;">Dikembalikan</span>
+                @endif
+                <div style="font-size:10px; color:#bbb; margin-top:3px;">{{ \Carbon\Carbon::parse($t->created_at)->diffForHumans() }}</div>
+            </div>
         </div>
-    </a>
+        @empty
+            <div style="text-align:center; color:#bbb; padding:30px 0; font-size:13px;">Belum ada transaksi.</div>
+        @endforelse
+    </div>
+
+    {{-- Aksi Cepat --}}
+    <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+            <div style="font-size:15px; font-weight:bold; color:#333; margin-bottom:16px;">⚡ Aksi Cepat</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <a href="{{ route('petugas.peminjaman') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                    📥 Kelola Peminjaman
+                </a>
+                <a href="{{ route('petugas.peminjaman.create') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                    ➕ Tambah Peminjaman
+                </a>
+                <a href="{{ route('petugas.anggota') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                    👤 Daftar Anggota
+                </a>
+                <a href="{{ route('petugas.bukupetugas.index') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                    📚 Data Buku
+                </a>
+            </div>
+        </div>
+
+        <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+            <div style="font-size:13px; font-weight:bold; color:#333; margin-bottom:10px;">💰 Total Denda Terkumpul</div>
+            <div style="font-size:22px; font-weight:bold; color:#e53935;">Rp {{ number_format($totalDenda, 0, ',', '.') }}</div>
+        </div>
+    </div>
 
 </div>
 

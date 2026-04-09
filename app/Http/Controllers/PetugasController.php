@@ -24,9 +24,18 @@ class PetugasController extends Controller
             'email'        => 'required|email|unique:users,email,' . $user->id,
             'phone_number' => 'nullable|string|max:20',
             'foto'         => 'nullable|image|max:2048',
+            'password'     => 'nullable|min:6|confirmed',
+        ], [
+            'email.unique'       => 'Email sudah digunakan oleh akun lain.',
+            'password.min'       => 'Password minimal 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         $data = $request->only('name', 'email', 'phone_number');
+
+        if ($request->filled('password')) {
+            $data['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
 
         if ($request->hasFile('foto')) {
             if ($user->foto) {
@@ -45,14 +54,16 @@ class PetugasController extends Controller
 
     public function dashboard()
     {
-        $peminjaman = Peminjaman::where('status', 'dipinjam')->count();
-        $terlambat  = Peminjaman::where('status', 'dipinjam')
-                        ->whereNotNull('tgl_jatuh_tempo')
-                        ->where('tgl_jatuh_tempo', '<', now()->toDateString())
-                        ->count();
+        $peminjaman    = Peminjaman::where('status', 'dipinjam')->count();
+        $terlambat     = Peminjaman::where('status', 'dipinjam')
+                            ->whereNotNull('tgl_jatuh_tempo')
+                            ->where('tgl_jatuh_tempo', '<', now()->toDateString())
+                            ->count();
         $mengembalikan = Peminjaman::where('status', 'mengembalikan')->count();
-
-        return view('petugas.dashboard', compact('peminjaman', 'terlambat', 'mengembalikan'));
+        $menunggu      = Peminjaman::where('status', 'menunggu')->count();
+        $totalDenda    = Peminjaman::sum('denda');
+        $transaksiTerbaru = Peminjaman::with('anggota')->orderByDesc('created_at')->limit(5)->get();
+        return view('petugas.dashboard', compact('peminjaman', 'terlambat', 'mengembalikan', 'menunggu', 'totalDenda', 'transaksiTerbaru'));
     }
 
     // ===== DAFTAR ANGGOTA =====

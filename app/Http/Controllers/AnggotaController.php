@@ -36,7 +36,10 @@ class AnggotaController extends Controller
     public function menuBuku()
     {
         $buku = Buku::all();
-        return view('Anggota.menu_buku', compact('buku'));
+        $jumlahDipinjam = Peminjaman::where('anggota_id', Auth::id())
+            ->whereIn('status', ['menunggu', 'dipinjam', 'mengembalikan'])
+            ->count();
+        return view('Anggota.menu_buku', compact('buku', 'jumlahDipinjam'));
     }
 
     public function formPinjam($id)
@@ -47,9 +50,15 @@ class AnggotaController extends Controller
 
     public function storePinjam(Request $request)
     {
-        $request->validate([
-            'buku_id' => 'required|exists:buku,id',
-        ]);
+        $request->validate(['buku_id' => 'required|exists:buku,id']);
+
+        $jumlahDipinjam = Peminjaman::where('anggota_id', Auth::id())
+            ->whereIn('status', ['menunggu', 'dipinjam', 'mengembalikan'])
+            ->count();
+
+        if ($jumlahDipinjam >= 2) {
+            return back()->with('error', 'Anda sudah meminjam 2 buku. Kembalikan buku terlebih dahulu sebelum meminjam lagi.');
+        }
 
         $buku = Buku::findOrFail($request->buku_id);
 
@@ -113,9 +122,18 @@ class AnggotaController extends Controller
             'phone_number' => 'required|string|max:20',
             'alamat'       => 'required|string|max:500',
             'foto'         => 'nullable|image|max:2048',
+            'password'     => 'nullable|min:6|confirmed',
+        ], [
+            'email.unique'       => 'Email sudah digunakan oleh akun lain.',
+            'password.min'       => 'Password minimal 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         $data = $request->only('name', 'email', 'phone_number', 'alamat');
+
+        if ($request->filled('password')) {
+            $data['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
 
         if ($request->hasFile('foto')) {
             if ($user->foto) {

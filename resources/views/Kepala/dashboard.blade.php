@@ -1,84 +1,120 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Perpustakaan</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-white min-h-screen">
+@extends('Kepala.layouts')
 
-<div class="flex min-h-screen">
+@section('title', 'Dashboard')
+@section('header', 'DASHBOARD')
 
-    <!-- SIDEBAR -->
-    <aside class="w-64 min-h-screen flex flex-col" style="background-color: #eeeeee;">
-        <div class="px-5 py-6 flex-1">
-            <h3 class="font-bold text-base mb-6 text-gray-800 leading-snug">
-                {{ Auth::user()->name }}<br>
-                <span class="text-gray-500 text-sm font-normal">({{ ucfirst(Auth::user()->role) }})</span>
-            </h3>
-            <nav class="space-y-2">
-                <a href="{{ route('kepala.petugas.index') }}"
-                   class="flex items-center gap-3 bg-white px-4 py-3 rounded text-sm text-gray-700 hover:bg-gray-300 transition">
-                    <span>👥</span> Data Petugas
-                </a>
-                <a href="{{ route('kepala.anggota.index') }}"
-                   class="flex items-center gap-3 bg-white px-4 py-3 rounded text-sm text-gray-700 hover:bg-gray-300 transition">
-                    <span>👤</span> Daftar Anggota
-                </a>
-                <a href="{{ route('kepala.katalog') }}"
-                   class="flex items-center gap-3 bg-white px-4 py-3 rounded text-sm text-gray-700 hover:bg-gray-300 transition">
-                    <span>📖</span> Katalog Buku
-                </a>
-                <a href="{{ route('kepala.laporan') }}"
-                   class="flex items-center gap-3 bg-white px-4 py-3 rounded text-sm text-gray-700 hover:bg-gray-300 transition">
-                    <span>📋</span> Laporan
-                </a>
-            </nav>
-        </div>
-        <div class="px-5 py-6">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button class="text-red-500 text-sm hover:underline">Logout</button>
-            </form>
-        </div>
-    </aside>
+@section('content')
 
-    <!-- MAIN -->
-    <div class="flex-1 flex flex-col">
-        <div style="background-color:#b57ba6; color:white; text-align:center; padding:20px; font-size:28px; font-weight:bold; position:relative;">
-            DASHBOARD
-            <a href="{{ route('kepala.profile') }}" style="position:absolute; right:20px; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:8px; text-decoration:none; color:white;">
-                @if(Auth::user()->foto)
-                    <img src="{{ asset('images/' . Auth::user()->foto) }}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid white;">
-                @else
-                    <div style="width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.3); border:2px solid white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:16px;">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </div>
-                @endif
-                <span style="font-size:13px;">{{ Auth::user()->name }}</span>
-            </a>
-        </div>
-        <div class="flex-1 p-10 bg-white">
-            <div class="grid grid-cols-3 gap-6 max-w-2xl">
-                <a href="{{ route('kepala.petugas.index') }}"
-                   class="bg-white rounded-xl shadow p-6 flex flex-col items-center gap-3 hover:shadow-md transition border border-gray-200">
-                    <div class="text-4xl">👥</div>
-                    <span class="font-semibold text-gray-700 text-sm text-center">Data Petugas</span>
-                </a>
-                <a href="{{ route('kepala.anggota.index') }}"
-                   class="bg-white rounded-xl shadow p-6 flex flex-col items-center gap-3 hover:shadow-md transition border border-gray-200">
-                    <div class="text-4xl">👤</div>
-                    <span class="font-semibold text-gray-700 text-sm text-center">Daftar Anggota</span>
-                </a>
-                <a href="{{ route('kepala.katalog') }}"
-                   class="bg-white rounded-xl shadow p-6 flex flex-col items-center gap-3 hover:shadow-md transition border border-gray-200">
-                    <div class="text-4xl">📖</div>
-                    <span class="font-semibold text-gray-700 text-sm text-center">Katalog Buku</span>
-                </a>
-            </div>
-        </div>
+{{-- Greeting --}}
+<div style="background: linear-gradient(135deg, #b57ba6, #d4a0c7); border-radius:16px; padding:24px 30px; margin-bottom:24px; color:white; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <div style="font-size:22px; font-weight:bold; margin-bottom:4px;">Halo, {{ Auth::user()->name }}! 👋</div>
+        <div style="font-size:13px; opacity:0.9;">{{ now()->format('l, d F Y') }} &nbsp;|&nbsp; Panel Kepala Perpustakaan</div>
     </div>
+    <div style="font-size:60px; opacity:0.3;">🏛️</div>
 </div>
 
-</body>
-</html>
+{{-- Stat Cards --}}
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px;">
+
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(181,123,166,0.15); border-left:5px solid #b57ba6;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Total Anggota</div>
+        <div style="font-size:36px; font-weight:bold; color:#b57ba6;">{{ $totalAnggota }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">anggota terdaftar</div>
+    </div>
+
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(0,188,212,0.15); border-left:5px solid #00bcd4;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Total Petugas</div>
+        <div style="font-size:36px; font-weight:bold; color:#00bcd4;">{{ $totalPetugas }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">petugas aktif</div>
+    </div>
+
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(76,175,80,0.15); border-left:5px solid #4caf50;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Total Buku</div>
+        <div style="font-size:36px; font-weight:bold; color:#4caf50;">{{ $totalBuku }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">koleksi buku</div>
+    </div>
+
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(255,193,7,0.15); border-left:5px solid #ffc107;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Sedang Dipinjam</div>
+        <div style="font-size:36px; font-weight:bold; color:#ffc107;">{{ $totalPinjam }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">buku aktif dipinjam</div>
+    </div>
+
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(229,57,53,0.15); border-left:5px solid #e53935;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Terlambat</div>
+        <div style="font-size:36px; font-weight:bold; color:#e53935;">{{ $totalTerlambat }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">melewati jatuh tempo</div>
+    </div>
+
+    <div style="background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(229,57,53,0.1); border-left:5px solid #ff7043;">
+        <div style="font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Total Denda</div>
+        <div style="font-size:26px; font-weight:bold; color:#ff7043;">Rp {{ number_format($totalDenda, 0, ',', '.') }}</div>
+        <div style="font-size:11px; color:#bbb; margin-top:4px;">akumulasi denda</div>
+    </div>
+
+</div>
+
+{{-- Transaksi Terbaru & Aksi Cepat --}}
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
+
+    {{-- Transaksi Terbaru --}}
+    <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div style="font-size:15px; font-weight:bold; color:#333;">📋 Transaksi Terbaru</div>
+            <a href="{{ route('kepala.laporan') }}" style="font-size:12px; color:#b57ba6; text-decoration:none;">Lihat semua →</a>
+        </div>
+        @forelse($transaksiTerbaru as $t)
+        <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #f5f5f5;">
+            <div style="width:36px; height:36px; border-radius:50%; background:#b57ba6; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:13px; flex-shrink:0;">
+                {{ strtoupper(substr($t->anggota->name ?? 'A', 0, 1)) }}
+            </div>
+            <div style="flex:1;">
+                <div style="font-size:13px; font-weight:600; color:#333;">{{ $t->anggota->name ?? '-' }}</div>
+                <div style="font-size:12px; color:#999;">{{ $t->judul_buku }}</div>
+            </div>
+            <div style="text-align:right;">
+                @if($t->status === 'menunggu')
+                    <span style="background:#e3d4f0; color:#6a1b9a; padding:3px 10px; border-radius:20px; font-size:11px;">Menunggu</span>
+                @elseif($t->status === 'dipinjam' && $t->hari_terlambat > 0)
+                    <span style="background:#f8d7da; color:#721c24; padding:3px 10px; border-radius:20px; font-size:11px;">Terlambat</span>
+                @elseif($t->status === 'dipinjam')
+                    <span style="background:#fff3cd; color:#856404; padding:3px 10px; border-radius:20px; font-size:11px;">Dipinjam</span>
+                @elseif($t->status === 'mengembalikan')
+                    <span style="background:#cce5ff; color:#004085; padding:3px 10px; border-radius:20px; font-size:11px;">Minta Kembali</span>
+                @else
+                    <span style="background:#d4edda; color:#155724; padding:3px 10px; border-radius:20px; font-size:11px;">Dikembalikan</span>
+                @endif
+                <div style="font-size:10px; color:#bbb; margin-top:3px;">{{ \Carbon\Carbon::parse($t->created_at)->diffForHumans() }}</div>
+            </div>
+        </div>
+        @empty
+            <div style="text-align:center; color:#bbb; padding:30px 0; font-size:13px;">Belum ada transaksi.</div>
+        @endforelse
+    </div>
+
+    {{-- Aksi Cepat --}}
+    <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+        <div style="font-size:15px; font-weight:bold; color:#333; margin-bottom:16px;">⚡ Aksi Cepat</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <a href="{{ route('kepala.laporan') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                📊 Lihat Laporan
+            </a>
+            <a href="{{ route('kepala.anggota.index') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                👤 Daftar Anggota
+            </a>
+            <a href="{{ route('kepala.petugas.index') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                👥 Data Petugas
+            </a>
+            <a href="{{ route('kepala.katalog') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                📚 Katalog Buku
+            </a>
+            <a href="{{ route('kepala.laporan.cetak.pdf') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
+                🖨️ Cetak Laporan PDF
+            </a>
+        </div>
+    </div>
+
+</div>
+
+@endsection

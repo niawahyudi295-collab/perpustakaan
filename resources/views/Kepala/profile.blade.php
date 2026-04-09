@@ -61,6 +61,23 @@
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
             </div>
 
+            <hr class="my-5">
+            <p class="text-xs text-gray-400 mb-3">Kosongkan jika tidak ingin mengubah password.</p>
+
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Password Baru</label>
+                <input type="password" name="password"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                       placeholder="Masukkan password baru">
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Konfirmasi Password</label>
+                <input type="password" name="password_confirmation"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                       placeholder="Ulangi password baru">
+            </div>
+
             <button type="submit" class="w-full py-2 text-white rounded-lg font-semibold text-sm hover:opacity-90"
                     style="background:#b57ba6;">Simpan Perubahan</button>
         </form>

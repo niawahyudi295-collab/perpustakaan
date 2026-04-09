@@ -12,6 +12,12 @@
            style="border-color:#b57ba6;">
 </div>
 
+@if($jumlahDipinjam >= 2)
+<div class="mb-5 px-4 py-3 rounded-lg text-sm font-semibold" style="background:#f8d7da; color:#721c24;">
+    ⚠️ Anda sudah meminjam 2 buku. Kembalikan salah satu buku terlebih dahulu sebelum meminjam lagi.
+</div>
+@endif
+
 {{-- Grid Buku --}}
 <div class="grid grid-cols-3 gap-6 px-4" id="bukuGrid">
     @forelse($buku as $b)
@@ -49,12 +55,14 @@
                 </span>
             </p>
 
-            @if($b->stok > 0)
+            @if($b->stok > 0 && $jumlahDipinjam < 2)
                 <button onclick="window.location='{{ route('anggota.buku.pinjam', $b->id) }}'"
                         class="px-5 py-2 text-white rounded-full text-sm font-semibold hover:opacity-90 transition"
                         style="background-color:#b57ba6;">
                     Pinjam
                 </button>
+            @elseif($b->stok > 0 && $jumlahDipinjam >= 2)
+                <span class="px-5 py-2 bg-gray-200 text-gray-400 rounded-full text-sm">Batas Pinjam</span>
             @else
                 <span class="px-5 py-2 bg-gray-200 text-gray-400 rounded-full text-sm">Stok Habis</span>
             @endif

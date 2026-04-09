@@ -85,6 +85,7 @@ Route::middleware(['auth', 'role:kepala'])->prefix('kepala')->name('kepala.')->g
     Route::get('/laporan', [KepalaController::class, 'laporan'])->name('laporan');
     Route::get('/laporan/{peminjaman}', [KepalaController::class, 'detailLaporan'])->name('laporan.detail');
     Route::get('/laporan/{peminjaman}/pdf', [KepalaController::class, 'cetakPdf'])->name('laporan.pdf');
+    Route::get('/laporan/cetak/pdf', [KepalaController::class, 'cetakPdfLaporan'])->name('laporan.cetak.pdf');
     Route::get('/profile', [KepalaController::class, 'profile'])->name('profile');
     Route::put('/profile', [KepalaController::class, 'updateProfile'])->name('profile.update');
 

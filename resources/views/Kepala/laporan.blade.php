@@ -7,6 +7,10 @@
 
 <div class="flex justify-between items-center mb-5">
     <h2 class="text-xl font-bold text-gray-800">Data Laporan Peminjaman</h2>
+    <a href="{{ route('kepala.laporan.cetak.pdf') }}"
+       style="background:#b57ba6; color:white; padding:8px 18px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:bold;">
+        🖨️ Cetak PDF
+    </a>
 </div>
 
 <div class="rounded overflow-hidden shadow">
