@@ -123,7 +123,7 @@ class PetugasController extends Controller
         $tglKembali    = now()->toDateString();
         $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
         $hariTerlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
-        $denda         = $hariTerlambat * 5000;
+        $denda         = $hariTerlambat * 2000;
 
         $peminjaman->update([
             'status'     => 'dikembalikan',
@@ -148,7 +148,7 @@ class PetugasController extends Controller
         $tglKembali    = now()->toDateString();
         $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
         $hariTerlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
-        $denda         = $hariTerlambat * 5000;
+        $denda         = $hariTerlambat * 2000;
 
         $peminjaman->update([
             'status'      => 'dikembalikan',

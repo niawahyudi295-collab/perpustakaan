@@ -77,7 +77,7 @@
     <tr><td>No. Transaksi</td><td>#{{ $peminjaman->id }}</td></tr>
     <tr><td>Judul Buku</td><td>{{ $peminjaman->judul_buku }}</td></tr>
     <tr><td>Tanggal Pinjam</td><td>{{ \Carbon\Carbon::parse($peminjaman->tgl_pinjam)->format('d F Y') }}</td></tr>
-    <tr><td>Tanggal Kembali</td><td>{{ \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d F Y') }}</td></tr>
+    <tr><td>Tanggal Kembali</td><td>{{ $peminjaman->status === 'dipinjam' ? '-' : \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d F Y') }}</td></tr>
     <tr>
         <td>Status</td>
         <td>
@@ -95,7 +95,7 @@
 <div class="section-title">Informasi Denda</div>
 @if($peminjaman->denda > 0)
 <div class="denda-box">
-    <div>Keterlambatan: <strong>{{ $peminjaman->hari_terlambat }} hari</strong> × Rp 5.000/hari</div>
+    <div>Keterlambatan: <strong>{{ $peminjaman->hari_terlambat }} hari</strong> × Rp 2.000/hari</div>
     <div class="nominal">Rp {{ number_format($peminjaman->denda, 0, ',', '.') }}</div>
 </div>
 @else

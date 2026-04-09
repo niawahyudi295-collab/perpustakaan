@@ -30,7 +30,7 @@
                 <td class="px-4 py-3">{{ $p->anggota->name ?? '-' }}</td>
                 <td class="px-4 py-3">{{ $p->judul_buku }}</td>
                 <td class="px-4 py-3 text-center">{{ \Carbon\Carbon::parse($p->tgl_pinjam)->format('d/m/Y') }}</td>
-                <td class="px-4 py-3 text-center">{{ \Carbon\Carbon::parse($p->tgl_kembali)->format('d/m/Y') }}</td>
+                <td class="px-4 py-3 text-center">{{ $p->status === 'dipinjam' ? '-' : \Carbon\Carbon::parse($p->tgl_kembali)->format('d/m/Y') }}</td>
                 <td class="px-4 py-3 text-center">
                     @if($p->status === 'dipinjam' && $p->hari_terlambat > 0)
                         <span style="background:#f8d7da; color:#721c24; padding:3px 10px; border-radius:20px; font-size:11px;">Terlambat</span>

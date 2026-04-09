@@ -9,16 +9,16 @@ use App\Http\Controllers\KepalaController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\BukuPetugasController;
 
-// =====================
+
 // HALAMAN AWAL
-// =====================
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-// =====================
+
 // LOGIN & REGISTER
-// =====================
+
 Route::middleware(\App\Http\Middleware\RedirectIfAuthenticated::class)->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -26,14 +26,14 @@ Route::middleware(\App\Http\Middleware\RedirectIfAuthenticated::class)->group(fu
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-// =====================
+
 // LOGOUT
-// =====================
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// =====================
+
 // ANGGOTA
-// =====================
+
 Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->name('anggota.')->group(function () {
     Route::get('/dashboard', [AnggotaController::class, 'dashboard'])->name('dashboard');
     Route::get('/buku', [AnggotaController::class, 'menuBuku'])->name('buku.index');
@@ -47,9 +47,9 @@ Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->name('anggota.')
     Route::put('/profile', [AnggotaController::class, 'updateProfile'])->name('profile.update');
 });
 
-// =====================
+
 // PETUGAS
-// =====================
+
 Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')->group(function () {
     Route::get('/dashboard', [PetugasController::class, 'dashboard'])->name('dashboard');
     Route::get('/anggota', [PetugasController::class, 'anggota'])->name('anggota');
@@ -75,9 +75,9 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')
     Route::resource('bukupetugas', BukuPetugasController::class);
 });
 
-// =====================
+
 // KEPALA PERPUSTAKAAN
-// =====================
+
 Route::middleware(['auth', 'role:kepala'])->prefix('kepala')->name('kepala.')->group(function () {
     Route::get('/dashboard', [KepalaController::class, 'dashboard'])->name('dashboard');
     Route::get('/katalog', [KepalaController::class, 'katalog'])->name('katalog');
@@ -88,7 +88,7 @@ Route::middleware(['auth', 'role:kepala'])->prefix('kepala')->name('kepala.')->g
     Route::get('/profile', [KepalaController::class, 'profile'])->name('profile');
     Route::put('/profile', [KepalaController::class, 'updateProfile'])->name('profile.update');
 
-    // Manajemen Petugas
+    // Menambah Petugas
     Route::get('/petugas', [KepalaController::class, 'indexPetugas'])->name('petugas.index');
     Route::get('/petugas/create', [KepalaController::class, 'createPetugas'])->name('petugas.create');
     Route::post('/petugas', [KepalaController::class, 'storePetugas'])->name('petugas.store');

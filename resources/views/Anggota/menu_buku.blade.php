@@ -13,7 +13,7 @@
 </div>
 
 {{-- Grid Buku --}}
-<div class="grid grid-cols-2 gap-6 px-4" id="bukuGrid">
+<div class="grid grid-cols-3 gap-6 px-4" id="bukuGrid">
     @forelse($buku as $b)
     <div class="buku-card bg-white rounded-2xl p-4 flex gap-4 items-start shadow"
          data-judul="{{ strtolower($b->judul) }}">

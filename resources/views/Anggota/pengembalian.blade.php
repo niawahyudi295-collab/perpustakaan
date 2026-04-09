@@ -22,6 +22,7 @@
                 <th class="px-4 py-3 text-left">Judul Buku</th>
                 <th class="px-4 py-3 text-center">Tgl Pinjam</th>
                 <th class="px-4 py-3 text-center">Tgl Jatuh Tempo</th>
+                <th class="px-4 py-3 text-center">Estimasi Denda</th>
                 <th class="px-4 py-3 text-center">Status</th>
                 <th class="px-4 py-3 text-center">Aksi</th>
             </tr>
@@ -48,6 +49,14 @@
                     @endif
                 </td>
                 <td class="px-4 py-3 text-center">
+                    @if($terlambat)
+                        <span class="text-red-600 font-bold">Rp {{ number_format($hariTerlambat * 2000, 0, ',', '.') }}</span>
+                        <br><span class="text-xs text-gray-400">({{ $hariTerlambat }} hari × Rp 2.000)</span>
+                    @else
+                        <span class="text-gray-400 text-xs">-</span>
+                    @endif
+                </td>
+                <td class="px-4 py-3 text-center">
                     @if($p->status === 'dipinjam' && $terlambat)
                         <span style="background:#f8d7da;color:#721c24;padding:3px 10px;border-radius:20px;font-size:11px;">⚠️ Terlambat</span>
                     @elseif($p->status === 'dipinjam')
@@ -71,7 +80,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-gray-400">
+                <td colspan="7" class="px-4 py-8 text-center text-gray-400">
                     <div class="text-3xl mb-2">📚</div>
                     Tidak ada buku yang sedang dipinjam.
                 </td>

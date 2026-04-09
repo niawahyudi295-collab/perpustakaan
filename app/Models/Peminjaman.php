@@ -25,4 +25,11 @@ class Peminjaman extends Model
     {
         return $this->belongsTo(User::class, 'anggota_id');
     }
+
+    public function getHariTerlambatAttribute()
+    {
+        if (!$this->tgl_jatuh_tempo || $this->status === 'dikembalikan') return 0;
+        $jatuhTempo = \Carbon\Carbon::parse($this->tgl_jatuh_tempo);
+        return now()->gt($jatuhTempo) ? now()->diffInDays($jatuhTempo) : 0;
+    }
 }

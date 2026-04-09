@@ -36,7 +36,7 @@
 
         <div class="text-gray-500 font-medium">Tanggal Kembali</div>
         <div class="{{ $peminjaman->hari_terlambat > 0 ? 'text-red-600 font-bold' : '' }}">
-            {{ \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d F Y') }}
+            {{ $peminjaman->status === 'dipinjam' ? '-' : \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d F Y') }}
         </div>
 
         <div class="text-gray-500 font-medium">Status</div>
@@ -69,7 +69,7 @@
             ⚠️ Anggota ini dikenakan denda sebesar
             <span class="text-red-600">Rp {{ number_format($peminjaman->denda, 0, ',', '.') }}</span>
             karena terlambat {{ $peminjaman->hari_terlambat }} hari
-            (Rp 5.000 × {{ $peminjaman->hari_terlambat }} hari).
+            (Rp 2.000 × {{ $peminjaman->hari_terlambat }} hari).
         </p>
     </div>
     @endif
