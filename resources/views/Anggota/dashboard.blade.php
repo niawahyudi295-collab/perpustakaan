@@ -47,8 +47,8 @@
 
 </div>
 
-{{-- Aktivitas & Aksi Cepat --}}
-<div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
+{{-- Aktivitas Terbaru --}}
+<div style="display:grid; grid-template-columns:1fr; gap:16px;">
 
     {{-- Aktivitas Terbaru --}}
     <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
@@ -93,26 +93,6 @@
         @endif
     </div>
 
-    {{-- Aksi Cepat --}}
-    <div style="display:flex; flex-direction:column; gap:12px;">
-        <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
-            <div style="font-size:15px; font-weight:bold; color:#333; margin-bottom:16px;">⚡ Aksi Cepat</div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <a href="{{ route('anggota.buku.index') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600; transition:background 0.2s;">
-                    📖 Cari & Pinjam Buku
-                </a>
-                <a href="{{ route('anggota.peminjaman') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                    📋 Status Peminjaman
-                </a>
-                <a href="{{ route('anggota.pengembalian') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                    🔄 Kembalikan Buku
-                </a>
-                <a href="{{ route('anggota.riwayat') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                    🕓 Riwayat Pinjam
-                </a>
-            </div>
-        </div>
-    </div>
 
 </div>
 

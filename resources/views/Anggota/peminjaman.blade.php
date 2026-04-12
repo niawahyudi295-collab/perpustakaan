@@ -35,7 +35,7 @@
             @php
                 $tglJatuhTempo = $p->tgl_jatuh_tempo ? \Carbon\Carbon::parse($p->tgl_jatuh_tempo) : null;
                 $hariTerlambat = ($tglJatuhTempo && $p->status === 'dipinjam' && now()->gt($tglJatuhTempo))
-                                    ? now()->diffInDays($tglJatuhTempo) : 0;
+                                    ? (int) now()->diffInDays($tglJatuhTempo) : 0;
             @endphp
             <tr class="border-b border-gray-100 hover:bg-pink-50">
                 <td class="px-4 py-3">{{ $i + 1 }}</td>
@@ -46,9 +46,6 @@
                         <span class="text-gray-400 text-xs">Menunggu petugas</span>
                     @else
                         {{ $tglJatuhTempo->format('d/m/Y') }}
-                        @if($hariTerlambat > 0)
-                            <br><span class="text-xs">({{ $hariTerlambat }} hari terlambat)</span>
-                        @endif
                     @endif
                 </td>
                 <td class="px-4 py-3 text-center text-gray-700">

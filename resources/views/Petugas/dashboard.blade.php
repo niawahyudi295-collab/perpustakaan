@@ -43,8 +43,8 @@
 
 </div>
 
-{{-- Transaksi Terbaru & Aksi Cepat --}}
-<div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
+{{-- Transaksi Terbaru --}}
+<div style="display:grid; grid-template-columns:1fr; gap:16px;">
 
     {{-- Transaksi Terbaru --}}
     <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
@@ -78,31 +78,6 @@
         @endforelse
     </div>
 
-    {{-- Aksi Cepat --}}
-    <div style="display:flex; flex-direction:column; gap:12px;">
-        <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
-            <div style="font-size:15px; font-weight:bold; color:#333; margin-bottom:16px;">⚡ Aksi Cepat</div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <a href="{{ route('petugas.peminjaman') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                    📥 Kelola Peminjaman
-                </a>
-                <a href="{{ route('petugas.peminjaman.create') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                    ➕ Tambah Peminjaman
-                </a>
-                <a href="{{ route('petugas.anggota') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                    👤 Daftar Anggota
-                </a>
-                <a href="{{ route('petugas.bukupetugas.index') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                    📚 Data Buku
-                </a>
-            </div>
-        </div>
-
-        <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
-            <div style="font-size:13px; font-weight:bold; color:#333; margin-bottom:10px;">💰 Total Denda Terkumpul</div>
-            <div style="font-size:22px; font-weight:bold; color:#e53935;">Rp {{ number_format($totalDenda, 0, ',', '.') }}</div>
-        </div>
-    </div>
 
 </div>
 

@@ -34,8 +34,8 @@
         @php
             $tglJatuhTempo = $p->tgl_jatuh_tempo ? \Carbon\Carbon::parse($p->tgl_jatuh_tempo) : null;
             $terlambat     = $tglJatuhTempo && $p->status === 'dipinjam' && now()->gt($tglJatuhTempo);
-            $hariTerlambat = $terlambat ? now()->diffInDays($tglJatuhTempo) : 0;
-            $sisaHari      = ($tglJatuhTempo && $p->status === 'dipinjam') ? now()->diffInDays($tglJatuhTempo, false) : null;
+            $hariTerlambat = $terlambat ? (int) now()->diffInDays($tglJatuhTempo) : 0;
+            $sisaHari      = ($tglJatuhTempo && $p->status === 'dipinjam') ? (int) now()->diffInDays($tglJatuhTempo, false) : null;
         @endphp
         <tr style="background:{{ $i % 2 == 0 ? '#f9f9f9' : '#eee' }}; text-align:center;">
             <td style="padding:10px;">{{ $i + 1 }}</td>
@@ -48,9 +48,9 @@
                 @elseif($p->status === 'dikembalikan')
                     <span style="color:#999;">{{ $tglJatuhTempo->format('d/m/Y') }}</span>
                 @elseif($terlambat)
-                    <span style="color:red; font-weight:bold;">{{ $tglJatuhTempo->format('d/m/Y') }}<br><small>Terlambat {{ $hariTerlambat }} hari</small></span>
+                    <span style="color:red; font-weight:bold;">{{ $tglJatuhTempo->format('d/m/Y') }}</span>
                 @elseif($sisaHari !== null && $sisaHari <= 3)
-                    <span style="color:orange; font-weight:bold;">{{ $tglJatuhTempo->format('d/m/Y') }}<br><small>{{ $sisaHari }} hari lagi</small></span>
+                    <span style="color:orange; font-weight:bold;">{{ $tglJatuhTempo->format('d/m/Y') }}</span>
                 @else
                     <span style="color:green;">{{ $tglJatuhTempo->format('d/m/Y') }}</span>
                 @endif

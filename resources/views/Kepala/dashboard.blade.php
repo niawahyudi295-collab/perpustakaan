@@ -55,8 +55,8 @@
 
 </div>
 
-{{-- Transaksi Terbaru & Aksi Cepat --}}
-<div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
+{{-- Transaksi Terbaru --}}
+<div style="display:grid; grid-template-columns:1fr; gap:16px;">
 
     {{-- Transaksi Terbaru --}}
     <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
@@ -93,27 +93,6 @@
         @endforelse
     </div>
 
-    {{-- Aksi Cepat --}}
-    <div style="background:white; border-radius:14px; padding:20px 24px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
-        <div style="font-size:15px; font-weight:bold; color:#333; margin-bottom:16px;">⚡ Aksi Cepat</div>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-            <a href="{{ route('kepala.laporan') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                📊 Lihat Laporan
-            </a>
-            <a href="{{ route('kepala.anggota.index') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                👤 Daftar Anggota
-            </a>
-            <a href="{{ route('kepala.petugas.index') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                👥 Data Petugas
-            </a>
-            <a href="{{ route('kepala.katalog') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                📚 Katalog Buku
-            </a>
-            <a href="{{ route('kepala.laporan.cetak.pdf') }}" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f9f0f6; border-radius:10px; text-decoration:none; color:#b57ba6; font-size:13px; font-weight:600;">
-                🖨️ Cetak Laporan PDF
-            </a>
-        </div>
-    </div>
 
 </div>
 
