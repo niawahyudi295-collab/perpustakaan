@@ -10,16 +10,16 @@
 @endif
 
 <div class="flex justify-between items-center mb-4">
-    <h2 class="font-bold text-gray-700 text-lg">Riwayat Peminjaman Saya</h2>
+    <h2 class="font-bold text-gray-700 text-lg"> Peminjaman Saya</h2>
     <a href="{{ route('anggota.buku.index') }}"
        class="text-white px-4 py-2 rounded text-sm font-semibold"
-       style="background-color:#b57ba6;">+ Pinjam Buku</a>
+      style="background-color:#C8A850; color:#2A2520;">+ Pinjam Buku</a>
 </div>
 
 <div class="bg-white rounded-xl shadow overflow-hidden">
     <table class="w-full text-sm">
         <thead>
-            <tr style="background-color:#b57ba6;" class="text-white">
+            <tr  style="background-color:#C8A850;" class="text-white">
                 <th class="px-4 py-3 text-left">No</th>
                 <th class="px-4 py-3 text-left">Judul Buku</th>
                 <th class="px-4 py-3 text-center">Tgl Pinjam</th>
@@ -27,7 +27,7 @@
                 <th class="px-4 py-3 text-center">Tgl Kembali</th>
                 <th class="px-4 py-3 text-center">Status</th>
                 <th class="px-4 py-3 text-center">Denda</th>
-                <th class="px-4 py-3 text-center">Aksi</th>
+                
             </tr>
         </thead>
         <tbody>

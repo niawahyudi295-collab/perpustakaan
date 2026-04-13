@@ -32,19 +32,19 @@
                     @if($user->foto)
                         <img id="fotoPreview" src="{{ asset('images/' . $user->foto) }}"
                              class="w-24 h-24 rounded-full object-cover border-4"
-                             style="border-color:#b57ba6;">
+                             style="border-color:#C8A850;">
                     @else
                         <div id="fotoPlaceholder" class="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold border-4"
-                             style="background-color:#b57ba6; border-color:#b57ba6;">
+                             style="background-color:#C8A850; border-color:#C8A850;">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
                         <img id="fotoPreview" src="" class="w-24 h-24 rounded-full object-cover border-4 hidden"
-                             style="border-color:#b57ba6;">
+                             style="border-color:#C8A850;">
                     @endif
 
                     {{-- Tombol kamera --}}
                     <label for="fotoInput" class="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer text-white text-xs"
-                           style="background-color:#b57ba6;">
+                          style="background-color:#C8A850;">
                         📷
                     </label>
                 </div>
@@ -100,7 +100,7 @@
 
             <button type="submit"
                     class="w-full py-2 text-white rounded-lg font-semibold text-sm hover:opacity-90"
-                    style="background-color:#b57ba6;">
+                    style="background-color:#C8A850;">
                 Simpan Perubahan
             </button>
         </form>

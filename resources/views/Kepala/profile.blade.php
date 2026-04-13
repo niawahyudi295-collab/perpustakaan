@@ -28,16 +28,16 @@
                 <div class="relative">
                     @if($user->foto)
                         <img id="fotoPreview" src="{{ asset('images/' . $user->foto) }}"
-                             class="w-24 h-24 rounded-full object-cover border-4" style="border-color:#b57ba6;">
+                             class="w-24 h-24 rounded-full object-cover border-4" style="border-color:#C8A850;">
                     @else
                         <div id="fotoPlaceholder" class="w-24 h-24 rounded-full flex items-center justify-content-center text-white text-3xl font-bold border-4"
-                             style="background:#b57ba6; border-color:#b57ba6; display:flex; align-items:center; justify-content:center;">
+                             style="background:#C8A850; border-color:#C8A850; display:flex; align-items:center; justify-content:center; color:#2A2520; font-size:20px; font-weight:bold;">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
-                        <img id="fotoPreview" src="" class="w-24 h-24 rounded-full object-cover border-4 hidden" style="border-color:#b57ba6;">
+                        <img id="fotoPreview" src="" class="w-24 h-24 rounded-full object-cover border-4 hidden" style="border-color:#C8A850;">
                     @endif
                     <label for="fotoInput" class="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer text-white text-xs"
-                           style="background:#b57ba6;">📷</label>
+                           style="background:#C8A850; color:#2A2520; cursor:pointer; font-size:18px;">📷</label>
                 </div>
                 <input type="file" id="fotoInput" name="foto" accept="image/*" class="hidden" onchange="previewFoto(this)">
                 <p class="text-xs text-gray-400 mt-2">Klik ikon kamera untuk ganti foto</p>
@@ -79,7 +79,7 @@
             </div>
 
             <button type="submit" class="w-full py-2 text-white rounded-lg font-semibold text-sm hover:opacity-90"
-                    style="background:#b57ba6;">Simpan Perubahan</button>
+                    style="background:#C8A850; color:#2A2520; border:none; cursor:pointer; font-weight:bold; transition: background 0.3s;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">Simpan Perubahan</button>
         </form>
     </div>
 </div>

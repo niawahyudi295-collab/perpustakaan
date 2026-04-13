@@ -18,7 +18,7 @@ class Peminjaman extends Model
         'tgl_jatuh_tempo',
         'tgl_kembali',
         'status',
-        'denda',
+        'denda'
     ];
 
     public function anggota()
@@ -27,9 +27,8 @@ class Peminjaman extends Model
     }
 
     public function getHariTerlambatAttribute()
-    {
-        if (!$this->tgl_jatuh_tempo || $this->status === 'dikembalikan') return 0;
-        $jatuhTempo = \Carbon\Carbon::parse($this->tgl_jatuh_tempo);
-        return now()->gt($jatuhTempo) ? now()->diffInDays($jatuhTempo) : 0;
-    }
+{
+    return $this->denda > 0 ? intval($this->denda / 2000) : 0;
+}
+
 }

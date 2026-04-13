@@ -11,7 +11,7 @@ class KatalogController extends Controller
     {
         $buku = DB::table('buku')->get();
         return view('Anggota.menu_buku', compact('buku'));
-    } // ✅ INI YANG TADI KURANG
+    } 
 
     // pinjam buku
     public function pinjam($id)

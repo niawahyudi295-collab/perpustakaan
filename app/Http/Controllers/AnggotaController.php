@@ -33,14 +33,23 @@ class AnggotaController extends Controller
         return view('Anggota.dashboard', compact('dipinjam', 'totalDenda', 'sisaHari', 'aktivitas'));
     }
 
-    public function menuBuku()
-    {
-        $buku = Buku::all();
-        $jumlahDipinjam = Peminjaman::where('anggota_id', Auth::id())
-            ->whereIn('status', ['menunggu', 'dipinjam', 'mengembalikan'])
-            ->count();
-        return view('Anggota.menu_buku', compact('buku', 'jumlahDipinjam'));
+    public function menuBuku(Request $request)
+{
+    $query = Buku::query();
+
+    if ($request->filled('kategori')) {
+        $query->where('kategori', $request->kategori);
     }
+
+    $buku = $query->get();
+    $kategori = \App\Models\Kategori::orderBy('nama')->get();
+
+    $jumlahDipinjam = Peminjaman::where('anggota_id', Auth::id())
+        ->whereIn('status', ['menunggu', 'dipinjam', 'mengembalikan'])
+        ->count();
+
+    return view('Anggota.menu_buku', compact('buku', 'jumlahDipinjam', 'kategori'));
+}
 
     public function formPinjam($id)
     {

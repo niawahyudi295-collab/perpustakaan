@@ -13,7 +13,7 @@
 
 <table style="width:100%; border-collapse:collapse;">
     <thead>
-        <tr style="background:#b57ba6; color:white;">
+        <tr style="background:#C8A850; color:#2A2520; font-weight:bold;">
             <th style="padding:12px;">No</th>
             <th style="padding:12px;">Nama</th>
             <th style="padding:12px;">Email</th>
@@ -31,10 +31,7 @@
             <td style="padding:10px;">{{ $a->phone_number ?? '-' }}</td>
             <td style="padding:10px;">{{ $a->alamat ?? '-' }}</td>
             <td style="padding:10px;">
-                <a href="{{ route('petugas.anggota.edit', $a) }}"
-                   style="background:#f0ad4e;color:white;padding:5px 12px;border-radius:5px;font-size:12px;text-decoration:none;">
-                    Edit
-                </a>
+
                 <form action="{{ route('petugas.anggota.destroy', $a) }}" method="POST" style="display:inline;"
                       onsubmit="return confirm('Hapus anggota {{ $a->name }}?')">
                     @csrf @method('DELETE')

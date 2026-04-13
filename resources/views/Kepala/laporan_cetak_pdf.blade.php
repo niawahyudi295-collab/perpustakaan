@@ -7,12 +7,12 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; font-size: 11px; color: #333; padding: 25px; }
 
-        .header { text-align: center; border-bottom: 3px solid #b57ba6; padding-bottom: 12px; margin-bottom: 20px; }
-        .header h1 { font-size: 18px; color: #b57ba6; margin-bottom: 3px; }
+        .header { text-align: center; border-bottom: 3px solid #8b5b5b; padding-bottom: 12px; margin-bottom: 20px; }
+        .header h1 { font-size: 18px; color: #a97b5f; margin-bottom: 3px; }
         .header p { font-size: 11px; color: #777; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        thead tr { background-color: #b57ba6; color: white; }
+        thead tr { background-color: #b5887b; color: white; }
         th { padding: 8px 10px; text-align: left; font-size: 11px; }
         td { padding: 7px 10px; border-bottom: 1px solid #eee; font-size: 11px; }
         tbody tr:nth-child(even) { background: #f9f0f6; }
@@ -23,12 +23,12 @@
         .badge-kembali    { background: #d4edda; color: #155724; }
         .badge-menunggu   { background: #cce5ff; color: #004085; }
 
-        .denda { color: #e53935; font-weight: bold; }
+        .denda { color: #967830; font-weight: bold; }
 
         .footer { margin-top: 25px; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 10px; display: flex; justify-content: space-between; }
 
         .summary { margin-bottom: 15px; font-size: 11px; color: #555; }
-        .summary span { font-weight: bold; color: #b57ba6; }
+        .summary span { font-weight: bold; color: #b58f7b; }
     </style>
 </head>
 <body>

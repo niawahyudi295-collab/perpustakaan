@@ -10,7 +10,7 @@
             width: 230px;
             height: 100vh;
             position: fixed;
-            background: #eeeeee;
+            background: #2A2520;
             padding-top: 20px;
             display: flex;
             flex-direction: column;
@@ -20,10 +20,10 @@
             font-size: 15px;
             font-weight: bold;
             padding: 0 20px 20px;
-            color: #222;
+            color: #F5F2EE;
             line-height: 1.4;
         }
-        .sidebar h3 small { font-weight: normal; font-size: 12px; color: #888; }
+        .sidebar h3 small { font-weight: normal; font-size: 12px; color: #C8A850; }
 
         .menu a {
             display: flex;
@@ -31,13 +31,14 @@
             gap: 10px;
             padding: 14px 20px;
             text-decoration: none;
-            color: #333;
+            color: #F5F2EE;
             font-size: 14px;
-            background: white;
+            background: transparent;
             margin: 0 12px 8px;
             border-radius: 6px;
+            transition: all 0.3s ease;
         }
-        .menu a:hover, .menu a.active { background: #ddd; font-weight: bold; }
+        .menu a:hover, .menu a.active { background: #C8A850; color: #2A2520; font-weight: bold; }
 
         .sidebar-footer {
             padding: 20px;
@@ -46,17 +47,21 @@
         .sidebar-footer form button {
             background: none;
             border: none;
-            color: #e53935;
+            color: #967830;
             cursor: pointer;
             font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .sidebar-footer form button:hover {
+            color: #C8A850;
         }
 
         .header {
             margin-left: 230px;
-            background: #b57ba6;
+            background: #C8A850;
             padding: 20px;
             text-align: center;
-            color: white;
+            color: #2A2520;
             font-size: 28px;
             font-weight: bold;
             position: relative;
@@ -70,28 +75,29 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: white;
+            color: #2A2520;
         }
         .header-profile img, .header-profile .avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid white;
+            border: 2px solid #2A2520;
         }
         .header-profile .avatar {
-            background: rgba(255,255,255,0.3);
+            background: #967830;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 16px;
+            color: #F5F2EE;
         }
         .content {
             margin-left: 230px;
             padding: 30px;
             min-height: calc(100vh - 70px);
-            background: #fff;
+            background: #F5F2EE;
         }
     </style>
 </head>

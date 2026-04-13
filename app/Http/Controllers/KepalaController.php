@@ -146,12 +146,35 @@ class KepalaController extends Controller
     {
         $data = Peminjaman::with('anggota')->orderByDesc('created_at')->get()
             ->map(function ($p) {
-                $tglJatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo ?? \Carbon\Carbon::parse($p->tgl_kembali)->addDays(3));
-                $hariTerlambat = ($p->status === 'dipinjam' && now()->gt($tglJatuhTempo))
-                    ? now()->diffInDays($tglJatuhTempo) : 0;
-                $p->denda = $hariTerlambat * 5000;
-                $p->hari_terlambat = $hariTerlambat;
-                $p->tgl_jatuh_tempo_parsed = $tglJatuhTempo;
+                // Skip jika tgl_jatuh_tempo belum diisi (status masih 'menunggu')
+                if (!$p->tgl_jatuh_tempo) {
+                    $p->denda = 0;
+                    $p->hari_terlambat = 0;
+                    return $p;
+                }
+                
+                $tglJatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo);
+                
+                if ($p->status === 'dipinjam') {
+                    // Untuk buku yang masih dipinjam, hitung keterlambatan dari sekarang
+                    $hariTerlambat = now()->gt($tglJatuhTempo)
+                        ? now()->diffInDays($tglJatuhTempo) : 0;
+                    $p->denda = $hariTerlambat * 2000;
+                } elseif ($p->status === 'dikembalikan') {
+                    // Untuk buku yang sudah dikembalikan, gunakan nilai denda yang sudah disimpan
+                    $p->denda = $p->denda ?? 0;
+                    if (!$p->denda && $p->tgl_kembali) {
+                        // Hitung ulang jika belum ada denda
+                        $tglKembali = \Carbon\Carbon::parse($p->tgl_kembali);
+                        $hariTerlambat = $tglKembali->gt($tglJatuhTempo)
+                            ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
+                        $p->denda = $hariTerlambat * 2000;
+                    }
+                } else {
+                    $p->denda = 0;
+                }
+                
+                $p->hari_terlambat = $p->denda > 0 ? intval($p->denda / 2000) : 0;
                 return $p;
             });
 
@@ -160,11 +183,34 @@ class KepalaController extends Controller
 
     public function detailLaporan(Peminjaman $peminjaman)
     {
-        $tglKembali    = \Carbon\Carbon::parse($peminjaman->tgl_kembali);
-        $hariTerlambat = ($peminjaman->status === 'dipinjam' && now()->gt($tglKembali))
-            ? now()->diffInDays($tglKembali) : 0;
-        $peminjaman->denda         = $hariTerlambat * 5000;
-        $peminjaman->hari_terlambat = $hariTerlambat;
+        // Skip jika tgl_jatuh_tempo belum diisi
+        if (!$peminjaman->tgl_jatuh_tempo) {
+            $peminjaman->denda = 0;
+            $peminjaman->hari_terlambat = 0;
+        } else {
+            $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
+            
+            if ($peminjaman->status === 'dipinjam') {
+                // Untuk buku yang masih dipinjam, hitung keterlambatan dari sekarang
+                $hariTerlambat = now()->gt($tglJatuhTempo)
+                    ? now()->diffInDays($tglJatuhTempo) : 0;
+                $peminjaman->denda = $hariTerlambat * 2000;
+            } elseif ($peminjaman->status === 'dikembalikan') {
+                // Untuk buku yang sudah dikembalikan, gunakan nilai denda yang ada
+                $peminjaman->denda = $peminjaman->denda ?? 0;
+                if (!$peminjaman->denda && $peminjaman->tgl_kembali) {
+                    $tglKembali = \Carbon\Carbon::parse($peminjaman->tgl_kembali);
+                    $hariTerlambat = $tglKembali->gt($tglJatuhTempo)
+                        ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
+                    $peminjaman->denda = $hariTerlambat * 2000;
+                }
+            } else {
+                $peminjaman->denda = 0;
+            }
+            
+            $peminjaman->hari_terlambat = $peminjaman->denda > 0 ? intval($peminjaman->denda / 2000) : 0;
+        }
+        
         $peminjaman->load('anggota');
 
         return view('Kepala.laporan_detail', compact('peminjaman'));
@@ -172,7 +218,39 @@ class KepalaController extends Controller
 
     public function cetakPdfLaporan()
     {
-        $data = Peminjaman::with('anggota')->orderByDesc('created_at')->get();
+        $data = Peminjaman::with('anggota')->orderByDesc('created_at')->get()
+            ->map(function ($p) {
+                // Skip jika tgl_jatuh_tempo belum diisi
+                if (!$p->tgl_jatuh_tempo) {
+                    $p->denda = 0;
+                    $p->hari_terlambat = 0;
+                    return $p;
+                }
+                
+                $tglJatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo);
+                
+                if ($p->status === 'dipinjam') {
+                    // Untuk buku yang masih dipinjam, hitung keterlambatan dari sekarang
+                    $hariTerlambat = now()->gt($tglJatuhTempo)
+                        ? now()->diffInDays($tglJatuhTempo) : 0;
+                    $p->denda = $hariTerlambat * 2000;
+                } elseif ($p->status === 'dikembalikan') {
+                    // Untuk buku yang sudah dikembalikan, gunakan nilai denda yang sudah disimpan
+                    $p->denda = $p->denda ?? 0;
+                    if (!$p->denda && $p->tgl_kembali) {
+                        $tglKembali = \Carbon\Carbon::parse($p->tgl_kembali);
+                        $hariTerlambat = $tglKembali->gt($tglJatuhTempo)
+                            ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
+                        $p->denda = $hariTerlambat * 2000;
+                    }
+                } else {
+                    $p->denda = 0;
+                }
+                
+                $p->hari_terlambat = $p->denda > 0 ? intval($p->denda / 2000) : 0;
+                return $p;
+            });
+        
         $pdf  = Pdf::loadView('Kepala.laporan_cetak_pdf', compact('data'))
                    ->setPaper('a4', 'landscape');
         return $pdf->download('laporan-peminjaman-' . now()->format('d-m-Y') . '.pdf');
@@ -180,11 +258,34 @@ class KepalaController extends Controller
 
     public function cetakPdf(Peminjaman $peminjaman)
     {
-        $tglKembali    = \Carbon\Carbon::parse($peminjaman->tgl_kembali);
-        $hariTerlambat = ($peminjaman->status === 'dipinjam' && now()->gt($tglKembali))
-            ? now()->diffInDays($tglKembali) : 0;
-        $peminjaman->denda         = $hariTerlambat * 5000;
-        $peminjaman->hari_terlambat = $hariTerlambat;
+        // Skip jika tgl_jatuh_tempo belum diisi
+        if (!$peminjaman->tgl_jatuh_tempo) {
+            $peminjaman->denda = 0;
+            $peminjaman->hari_terlambat = 0;
+        } else {
+            $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
+            
+            if ($peminjaman->status === 'dipinjam') {
+                // Untuk buku yang masih dipinjam, hitung keterlambatan dari sekarang
+                $hariTerlambat = now()->gt($tglJatuhTempo)
+                    ? now()->diffInDays($tglJatuhTempo) : 0;
+                $peminjaman->denda = $hariTerlambat * 2000;
+            } elseif ($peminjaman->status === 'dikembalikan') {
+                // Untuk buku yang sudah dikembalikan, gunakan nilai denda yang ada
+                $peminjaman->denda = $peminjaman->denda ?? 0;
+                if (!$peminjaman->denda && $peminjaman->tgl_kembali) {
+                    $tglKembali = \Carbon\Carbon::parse($peminjaman->tgl_kembali);
+                    $hariTerlambat = $tglKembali->gt($tglJatuhTempo)
+                        ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
+                    $peminjaman->denda = $hariTerlambat * 2000;
+                }
+            } else {
+                $peminjaman->denda = 0;
+            }
+            
+            $peminjaman->hari_terlambat = $peminjaman->denda > 0 ? intval($peminjaman->denda / 2000) : 0;
+        }
+        
         $peminjaman->load('anggota');
 
         $pdf = Pdf::loadView('Kepala.laporan_pdf', compact('peminjaman'))

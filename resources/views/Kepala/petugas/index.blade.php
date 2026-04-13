@@ -8,7 +8,7 @@
     <h2 class="text-xl font-bold text-gray-900">Daftar Petugas</h2>
     <a href="{{ route('kepala.petugas.create') }}"
        class="text-white px-5 py-2 rounded font-semibold text-sm hover:opacity-90 transition"
-       style="background-color: #a76a82;">
+       style="background-color: #a77c6a;">
         + Tambah Petugas
     </a>
 </div>
@@ -20,7 +20,7 @@
 <div class="rounded overflow-hidden shadow">
     <table class="w-full text-sm">
         <thead>
-            <tr style="background-color: #b05e7f;" class="text-white">
+            <tr style="background-color: #a35c4b;" class="text-white">
                 <th class="px-5 py-3 text-left font-semibold w-16">No</th>
                 <th class="px-5 py-3 text-center font-semibold">Nama</th>
                 <th class="px-5 py-3 text-center font-semibold">Email</th>

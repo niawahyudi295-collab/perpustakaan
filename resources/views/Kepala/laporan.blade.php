@@ -8,7 +8,7 @@
 <div class="flex justify-between items-center mb-5">
     <h2 class="text-xl font-bold text-gray-800">Data Laporan Peminjaman</h2>
     <a href="{{ route('kepala.laporan.cetak.pdf') }}"
-       style="background:#b57ba6; color:white; padding:8px 18px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:bold;">
+       style="background:#C8A850; color:#2A2520; padding:8px 18px; border-radius:6px; text-decoration:none; font-size:13px; font-weight:bold; transition: background 0.3s;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
         🖨️ Cetak PDF
     </a>
 </div>
@@ -16,7 +16,7 @@
 <div class="rounded overflow-hidden shadow">
     <table class="w-full text-sm">
         <thead>
-            <tr style="background-color:#b57ba6;" class="text-white">
+            <tr style="background-color:;" class="text-white">
                 <th class="px-4 py-3 text-left">No</th>
                 <th class="px-4 py-3 text-left">Nama Anggota</th>
                 <th class="px-4 py-3 text-left">Judul Buku</th>
@@ -49,7 +49,7 @@
                 </td>
                 <td class="px-4 py-3 text-center">
                     <a href="{{ route('kepala.laporan.detail', $p->id) }}"
-                       style="background:#b57ba6; color:white; padding:5px 14px; border-radius:5px; text-decoration:none; font-size:12px;">
+                       style="background:#C8A850; color:#2A2520; padding:5px 14px; border-radius:5px; text-decoration:none; font-size:12px; font-weight:600;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
                         Detail
                     </a>
                 </td>

@@ -8,4 +8,49 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    --color-primary-dark: #2A2520;
+    --color-primary-medium: #504840;
+    --color-light: #F5F2EE;
+    --color-accent-gold: #C8A850;
+    --color-accent-dark: #967830;
+}
+
+/* Custom utility classes */
+@layer utilities {
+    .bg-primary-dark {
+        @apply bg-[#2A2520];
+    }
+    .bg-primary-medium {
+        @apply bg-[#504840];
+    }
+    .bg-light {
+        @apply bg-[#F5F2EE];
+    }
+    .bg-accent-gold {
+        @apply bg-[#C8A850];
+    }
+    .bg-accent-dark {
+        @apply bg-[#967830];
+    }
+
+    .text-primary-dark {
+        @apply text-[#2A2520];
+    }
+    .text-primary-medium {
+        @apply text-[#504840];
+    }
+    .text-light {
+        @apply text-[#F5F2EE];
+    }
+    .text-accent-gold {
+        @apply text-[#C8A850];
+    }
+    .text-accent-dark {
+        @apply text-[#967830];
+    }
+
+    .border-accent-gold {
+        @apply border-[#C8A850];
+    }
 }

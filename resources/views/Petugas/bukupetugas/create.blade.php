@@ -32,8 +32,8 @@
                 @endforeach
             </select>
             @if($kategori->isEmpty())
-                <p style="font-size:12px; color:#e53935; margin-top:4px;">
-                    Belum ada kategori. <a href="{{ route('petugas.kategori') }}" style="color:#b57ba6;">Tambah kategori dulu</a>.
+                <p style="font-size:12px; color:#967830; margin-top:4px;">
+                    Belum ada kategori. <a href="{{ route('petugas.kategori') }}" style="color:#C8A850; font-weight:bold; text-decoration:none;" onmouseover="this.style.color='#967830';" onmouseout="this.style.color='#C8A850';">Tambah kategori dulu</a>.
                 </p>
             @endif
         </div>
@@ -73,7 +73,7 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" style="flex:1; padding:10px; background:#b57ba6; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Simpan</button>
+            <button type="submit" style="flex:1; padding:10px; background:#C8A850; color:#2A2520; border:none; border-radius:8px; font-weight:bold; cursor:pointer; transition: all 0.3s;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">Simpan</button>
             <a href="{{ route('petugas.bukupetugas.index') }}" style="flex:1; padding:10px; background:#eee; border-radius:8px; text-align:center; text-decoration:none; color:#333;">Batal</a>
         </div>
     </form>

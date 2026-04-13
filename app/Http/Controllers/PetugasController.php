@@ -62,7 +62,18 @@ class PetugasController extends Controller
         $mengembalikan = Peminjaman::where('status', 'mengembalikan')->count();
         $menunggu      = Peminjaman::where('status', 'menunggu')->count();
         $totalDenda    = Peminjaman::sum('denda');
-        $transaksiTerbaru = Peminjaman::with('anggota')->orderByDesc('created_at')->limit(5)->get();
+        $transaksiTerbaru = Peminjaman::with('anggota')->orderByDesc('created_at')->limit(5)->get()
+            ->map(function ($t) {
+                if (!$t->tgl_jatuh_tempo) {
+                    $t->hari_terlambat = 0;
+                } elseif ($t->status === 'dipinjam') {
+                    $tglJatuhTempo = \Carbon\Carbon::parse($t->tgl_jatuh_tempo);
+                    $t->hari_terlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
+                } else {
+                    $t->hari_terlambat = 0;
+                }
+                return $t;
+            });
         return view('petugas.dashboard', compact('peminjaman', 'terlambat', 'mengembalikan', 'menunggu', 'totalDenda', 'transaksiTerbaru'));
     }
 
@@ -100,7 +111,22 @@ class PetugasController extends Controller
     // ===== PEMINJAMAN =====
     public function peminjaman()
     {
-        $peminjaman = Peminjaman::with('anggota')->orderByDesc('created_at')->get();
+        $peminjaman = Peminjaman::with('anggota')->orderByDesc('created_at')->get()
+            ->map(function ($p) {
+                if (!$p->tgl_jatuh_tempo) {
+                    $p->hari_terlambat = 0;
+                } elseif ($p->status === 'dipinjam') {
+                    $tglJatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo);
+                    $p->hari_terlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
+                } elseif ($p->status === 'dikembalikan' && $p->tgl_kembali) {
+                    $tglJatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo);
+                    $tglKembali = \Carbon\Carbon::parse($p->tgl_kembali);
+                    $p->hari_terlambat = $tglKembali->gt($tglJatuhTempo) ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
+                } else {
+                    $p->hari_terlambat = 0;
+                }
+                return $p;
+            });
         return view('petugas.peminjaman.index', compact('peminjaman'));
     }
 
@@ -132,9 +158,14 @@ class PetugasController extends Controller
     public function kembalikan(Peminjaman $peminjaman)
     {
         $tglKembali    = now()->toDateString();
-        $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
-        $hariTerlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
-        $denda         = $hariTerlambat * 2000;
+        if (!$peminjaman->tgl_jatuh_tempo) {
+            $hariTerlambat = 0;
+            $denda = 0;
+        } else {
+            $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
+            $hariTerlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
+            $denda = $hariTerlambat * 2000;
+        }
 
         $peminjaman->update([
             'status'     => 'dikembalikan',
@@ -157,9 +188,14 @@ class PetugasController extends Controller
     public function konfirmasiKembali(Peminjaman $peminjaman)
     {
         $tglKembali    = now()->toDateString();
-        $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
-        $hariTerlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
-        $denda         = $hariTerlambat * 2000;
+        if (!$peminjaman->tgl_jatuh_tempo) {
+            $hariTerlambat = 0;
+            $denda = 0;
+        } else {
+            $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
+            $hariTerlambat = now()->gt($tglJatuhTempo) ? now()->diffInDays($tglJatuhTempo) : 0;
+            $denda = $hariTerlambat * 2000;
+        }
 
         $peminjaman->update([
             'status'      => 'dikembalikan',

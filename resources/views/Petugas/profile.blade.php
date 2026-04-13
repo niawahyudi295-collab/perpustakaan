@@ -28,14 +28,14 @@
                 <div style="position:relative;">
                     @if($user->foto)
                         <img id="fotoPreview" src="{{ asset('images/' . $user->foto) }}"
-                             style="width:96px; height:96px; border-radius:50%; object-fit:cover; border:4px solid #b57ba6;">
+                             style="width:96px; height:96px; border-radius:50%; object-fit:cover; border:4px solid #C8A850;">
                     @else
-                        <div id="fotoPlaceholder" style="width:96px; height:96px; border-radius:50%; background:#b57ba6; border:4px solid #b57ba6; display:flex; align-items:center; justify-content:center; color:white; font-size:2rem; font-weight:bold;">
+                        <div id="fotoPlaceholder" style="width:96px; height:96px; border-radius:50%; background:#C8A850; border:4px solid #C8A850; display:flex; align-items:center; justify-content:center; color:#2A2520; font-size:2rem; font-weight:bold;">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
-                        <img id="fotoPreview" src="" style="width:96px; height:96px; border-radius:50%; object-fit:cover; border:4px solid #b57ba6; display:none;">
+                        <img id="fotoPreview" src="" style="width:96px; height:96px; border-radius:50%; object-fit:cover; border:4px solid #C8A850; display:none;">
                     @endif
-                    <label for="fotoInput" style="position:absolute; bottom:0; right:0; width:28px; height:28px; border-radius:50%; background:#b57ba6; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;">📷</label>
+                    <label for="fotoInput" style="position:absolute; bottom:0; right:0; width:28px; height:28px; border-radius:50%; background:#C8A850; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; color:#2A2520;">📷</label>
                 </div>
                 <input type="file" id="fotoInput" name="foto" accept="image/*" style="display:none;" onchange="previewFoto(this)">
                 <p style="font-size:12px; color:#999; margin-top:8px;">Klik ikon kamera untuk ganti foto</p>
@@ -77,7 +77,7 @@
             </div>
 
             <button type="submit"
-                    style="width:100%; padding:10px; background:#b57ba6; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    style="width:100%; padding:10px; background:#C8A850; color:#2A2520; border:none; border-radius:8px; font-weight:bold; cursor:pointer; transition: background 0.3s;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
                 Simpan Perubahan
             </button>
         </form>

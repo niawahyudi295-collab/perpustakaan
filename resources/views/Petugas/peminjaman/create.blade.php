@@ -46,7 +46,7 @@
 
         <div style="display:flex; gap:10px;">
             <button type="submit"
-                    style="flex:1; padding:10px; background:#b57ba6; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                    style="flex:1; padding:10px; background:#C8A850; color:#2A2520; border:none; border-radius:8px; font-weight:bold; cursor:pointer; transition: all 0.3s;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
                 Simpan
             </button>
             <a href="{{ route('petugas.peminjaman') }}"

@@ -28,7 +28,7 @@
         <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Nama kategori..."
                style="flex:1; padding:9px 12px; border:1px solid #ccc; border-radius:6px; font-size:14px;" required>
         <button type="submit"
-                style="padding:9px 20px; background:#b57ba6; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-weight:bold; white-space:nowrap;">
+                style="padding:9px 20px; background:#C8A850; color:#2A2520; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-weight:bold; white-space:nowrap; transition: background 0.3s;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
             + Tambah
         </button>
     </form>
@@ -37,7 +37,7 @@
 {{-- TABEL KATEGORI --}}
 <table style="width:100%; border-collapse:collapse;">
     <thead>
-        <tr style="background:#b57ba6; color:white;">
+        <tr style="background:#C8A850; color:#2A2520; font-weight:bold;">
             <th style="padding:12px; text-align:center; width:50px;">No</th>
             <th style="padding:12px; text-align:left;">Nama Kategori</th>
             <th style="padding:12px; text-align:center; width:180px;">Aksi</th>

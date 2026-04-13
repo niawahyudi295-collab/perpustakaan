@@ -9,16 +9,16 @@
 
         .header {
             text-align: center;
-            border-bottom: 3px solid #b57ba6;
+            border-bottom: 3px solid #C8A850;
             padding-bottom: 15px;
             margin-bottom: 25px;
         }
-        .header h1 { font-size: 20px; color: #b57ba6; margin-bottom: 4px; }
-        .header p { font-size: 12px; color: #777; }
+        .header h1 { font-size: 20px; color: #C8A850; margin-bottom: 4px; }
+        .header p { font-size: 12px; color: #504840; }
 
         .section-title {
-            background: #b57ba6;
-            color: white;
+            background: #C8A850;
+            color: #2A2520;
             padding: 7px 14px;
             font-size: 13px;
             font-weight: bold;
@@ -36,18 +36,18 @@
             margin-bottom: 20px;
             font-size: 13px;
         }
-        .status-terlambat { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .status-dipinjam  { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
-        .status-kembali   { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-terlambat { background: #f5e6cc; color: #504840; border: 1px solid #C8A850; }
+        .status-dipinjam  { background: #e8f4e8; color: #2A2520; border: 1px solid #C8A850; }
+        .status-kembali   { background: #dfe8dc; color: #2A2520; border: 1px solid #C8A850; }
 
         .denda-box {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
+            background: #f5e6cc;
+            border: 1px solid #C8A850;
             padding: 12px 16px;
             border-radius: 6px;
             margin-top: 10px;
         }
-        .denda-box .nominal { font-size: 22px; font-weight: bold; color: #e53935; margin-top: 4px; }
+        .denda-box .nominal { font-size: 22px; font-weight: bold; color: #967830; margin-top: 4px; }
 
         .footer {
             margin-top: 40px;

@@ -85,11 +85,13 @@
                 </form>
             </td>
             <td style="padding:10px;">
+                @php $hasAction = false; @endphp
                 @if($p->status === 'menunggu')
+                    @php $hasAction = true; @endphp
                     <form action="{{ route('petugas.peminjaman.konfirmasi', $p) }}" method="POST" style="display:inline;"
                           onsubmit="return confirm('Konfirmasi peminjaman ini? Jatuh tempo akan ditetapkan 5 hari dari tanggal pinjam.')">
                         @csrf @method('PATCH')
-                        <button style="background:#b57ba6;color:white;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;font-size:12px;">
+                        <button style="background:#C8A850;color:#2A2520;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;font-size:12px;font-weight:600;transition: all 0.3s;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
                             Konfirmasi
                         </button>
                     </form>

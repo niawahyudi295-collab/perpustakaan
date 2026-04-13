@@ -14,8 +14,18 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if (!in_array(Auth::user()->role, $roles)) {
-            abort(403, 'Akses ditolak.');
+        try {
+            $user = Auth::user();
+            if (!$user || !isset($user->role)) {
+                return redirect()->route('login')->with('error', 'User role tidak ditemukan.');
+            }
+
+            if (!in_array($user->role, $roles)) {
+                abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+            }
+        } catch (\Exception $e) {
+            \Log::error('RoleMiddleware Error: ' . $e->getMessage());
+            return redirect()->route('login')->with('error', 'Terjadi kesalahan autentikasi.');
         }
 
         return $next($request);

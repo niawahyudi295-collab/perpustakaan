@@ -17,7 +17,7 @@
 <div class="bg-white rounded-xl shadow overflow-hidden">
     <table class="w-full text-sm">
         <thead>
-            <tr style="background-color:#b57ba6;" class="text-white">
+            <tr style="background-color:#C8A850;" class="text-white">
                 <th class="px-4 py-3 text-left">No</th>
                 <th class="px-4 py-3 text-left">Judul Buku</th>
                 <th class="px-4 py-3 text-center">Tgl Pinjam</th>

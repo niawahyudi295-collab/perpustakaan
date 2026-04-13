@@ -73,6 +73,8 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')
     Route::put('/kategori/{kategori}', [PetugasController::class, 'updateKategori'])->name('kategori.update');
     Route::delete('/kategori/{kategori}', [PetugasController::class, 'destroyKategori'])->name('kategori.destroy');
     Route::resource('bukupetugas', BukuPetugasController::class);
+    Route::post('/konfirmasi-denda/{id}', [PeminjamanController::class, 'konfirmasiDenda'])
+    ->name('konfirmasi.denda');
 });
 
 

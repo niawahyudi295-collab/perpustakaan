@@ -11,7 +11,7 @@
 <div class="rounded overflow-hidden shadow">
     <table class="w-full text-sm">
         <thead>
-            <tr style="background-color: #ccb1bc;" class="text-white">
+            <tr style="background-color: #916c65;" class="text-white">
                 <th class="px-5 py-3 text-left font-semibold w-16">No</th>
                 <th class="px-5 py-3 text-left font-semibold">Nama</th>
                 <th class="px-5 py-3 text-left font-semibold">Email</th>

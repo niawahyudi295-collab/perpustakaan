@@ -6,14 +6,28 @@
 @section('content')
 
 {{-- Search --}}
-<div class="flex justify-center mb-6">
+<div class="flex justify-center gap-3 mb-6">
     <input type="text" id="searchInput" placeholder="Cari judul buku..."
-           class="w-2/3 px-5 py-3 rounded-full border-2 outline-none text-sm"
-           style="border-color:#b57ba6;">
+           class="w-1/2 px-5 py-3 rounded-full border-2 outline-none text-sm"
+           style="border-color:#C8A850;">
+
+   <form method="GET" action="{{ route('anggota.buku.index') }}">
+        <select name="kategori" onchange="this.form.submit()"
+                class="px-4 py-3 rounded-full border-2 outline-none text-sm"
+                style="border-color:#C8A850; color:#C8A850;">
+            <option value="">Semua Kategori</option>
+            @foreach($kategori as $k)
+                <option value="{{ $k->nama }}"
+                    {{ request('kategori') == $k->nama ? 'selected' : '' }}>
+                    {{ $k->nama }}
+                </option>
+            @endforeach
+        </select>
+    </form>
 </div>
 
 @if($jumlahDipinjam >= 2)
-<div class="mb-5 px-4 py-3 rounded-lg text-sm font-semibold" style="background:#f8d7da; color:#721c24;">
+<div class="mb-5 px-4 py-3 rounded-lg text-sm font-semibold" style="background:#f5e6cc; color:#504840;">
     ⚠️ Anda sudah meminjam 2 buku. Kembalikan salah satu buku terlebih dahulu sebelum meminjam lagi.
 </div>
 @endif
@@ -43,7 +57,7 @@
 
             <p class="text-xs text-gray-400 mb-1">
                 <span class="font-semibold">Kategori:</span>
-                <span style="color:#b57ba6;">{{ $b->kategori ?? '-' }}</span>
+                <span style="color:#C8A850;">{{ $b->kategori ?? '-' }}</span>
             </p>
             <p class="text-xs text-gray-400 mb-1">
                 <span class="font-semibold">Penerbit:</span> {{ $b->penerbit ?? '-' }}
@@ -58,7 +72,7 @@
             @if($b->stok > 0 && $jumlahDipinjam < 2)
                 <button onclick="window.location='{{ route('anggota.buku.pinjam', $b->id) }}'"
                         class="px-5 py-2 text-white rounded-full text-sm font-semibold hover:opacity-90 transition"
-                        style="background-color:#b57ba6;">
+                        style="background-color:#C8A850; color:#2A2520;">
                     Pinjam
                 </button>
             @elseif($b->stok > 0 && $jumlahDipinjam >= 2)

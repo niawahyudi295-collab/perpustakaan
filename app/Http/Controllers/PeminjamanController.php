@@ -35,6 +35,7 @@ class PeminjamanController extends Controller
         return view('Anggota.create_peminjaman');
     }
 
+
     // SIMPAN DATA
     public function store(Request $request)
     {

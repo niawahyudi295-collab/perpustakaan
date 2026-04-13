@@ -13,7 +13,7 @@
 
 <div style="margin-bottom:15px;">
     <a href="{{ route('petugas.bukupetugas.create') }}"
-       style="background:#b57ba6; color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-size:14px;">
+       style="background:#C8A850; color:#2A2520; padding:10px 20px; border-radius:8px; text-decoration:none; font-size:14px; font-weight:bold; transition: all 0.3s; display:inline-block;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
         + Tambah Buku
     </a>
 </div>
