@@ -57,6 +57,9 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')
     Route::put('/anggota/{user}', [PetugasController::class, 'updateAnggota'])->name('anggota.update');
     Route::delete('/anggota/{user}', [PetugasController::class, 'destroyAnggota'])->name('anggota.destroy');
     Route::get('/peminjaman', [PetugasController::class, 'peminjaman'])->name('peminjaman');
+    Route::get('/peminjaman/{id}/cetak', 
+    [PeminjamanController::class, 'cetak'])
+    ->name('peminjaman.cetak');
     Route::get('/peminjaman/create', [PetugasController::class, 'createPeminjaman'])->name('peminjaman.create');
     Route::post('/peminjaman', [PetugasController::class, 'storePeminjaman'])->name('peminjaman.store');
     Route::get('/profile', [PetugasController::class, 'profile'])->name('profile');
@@ -68,6 +71,7 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')
     Route::patch('/peminjaman/{peminjaman}/konfirmasi', [PetugasController::class, 'konfirmasi'])->name('peminjaman.konfirmasi');
     Route::patch('/peminjaman/{peminjaman}/konfirmasi-kembali', [PetugasController::class, 'konfirmasiKembali'])->name('peminjaman.konfirmasi.kembali');
     Route::patch('/peminjaman/{peminjaman}/denda', [PetugasController::class, 'updateDenda'])->name('peminjaman.update.denda');
+    Route::get('/peminjaman/{peminjaman}/cetak-denda', [PetugasController::class, 'cetakDenda'])->name('peminjaman.cetak.denda');
     Route::get('/kategori', [PetugasController::class, 'kategori'])->name('kategori');
     Route::post('/kategori', [PetugasController::class, 'storeKategori'])->name('kategori.store');
     Route::put('/kategori/{kategori}', [PetugasController::class, 'updateKategori'])->name('kategori.update');
@@ -75,6 +79,8 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')
     Route::resource('bukupetugas', BukuPetugasController::class);
     Route::post('/konfirmasi-denda/{id}', [PeminjamanController::class, 'konfirmasiDenda'])
     ->name('konfirmasi.denda');
+    
+    
 });
 
 

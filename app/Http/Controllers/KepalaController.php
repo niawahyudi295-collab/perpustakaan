@@ -12,6 +12,151 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class KepalaController extends Controller
 {
+    // =========================================================
+    // HELPER — satu tempat untuk semua logika hitung denda
+    // =========================================================
+    private function hitungDenda(Peminjaman $p): array
+    {
+        $hariTerlambat      = 0;
+        $dendaKeterlambatan = 0;
+        $dendaKondisi       = 0;
+
+        // 1. Hitung keterlambatan
+        if ($p->tgl_jatuh_tempo) {
+            $jatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo)->startOfDay();
+
+            if ($p->status === 'dipinjam') {
+                $acuan = now()->startOfDay();
+            } else {
+                $acuan = \Carbon\Carbon::parse($p->tgl_kembali)->startOfDay();
+            }
+
+            $hariTerlambat      = max(0, (int) $jatuhTempo->diffInDays($acuan, false) * -1);
+            $dendaKeterlambatan = $hariTerlambat * 2000;
+        }
+
+        // 2. Hitung denda kondisi buku — PAKAI kondisi_buku bukan kondisi
+        if ($p->kondisi_buku === 'hilang') {
+            $dendaKondisi = 50000;
+        } elseif ($p->kondisi_buku === 'rusak') {
+            $dendaKondisi = 20000;
+        }
+
+        return [
+            'hari_terlambat'      => $hariTerlambat,
+            'denda_keterlambatan' => $dendaKeterlambatan,
+            'denda_kondisi'       => $dendaKondisi,
+            'total_denda'         => $dendaKeterlambatan + $dendaKondisi,
+        ];
+    }
+
+    // =========================================================
+    // DASHBOARD
+    // =========================================================
+    public function dashboard()
+    {
+        $totalAnggota   = User::where('role', 'anggota')->count();
+        $totalPetugas   = User::where('role', 'petugas')->count();
+        $totalBuku      = Buku::count();
+        $totalPinjam    = Peminjaman::whereIn('status', ['dipinjam', 'mengembalikan'])->count();
+        $totalTerlambat = Peminjaman::where('status', 'dipinjam')
+                            ->whereNotNull('tgl_jatuh_tempo')
+                            ->where('tgl_jatuh_tempo', '<', now()->toDateString())
+                            ->count();
+
+        // Jumlah total denda dari semua peminjaman (hitung ulang, bukan ambil kolom lama)
+        $totalDenda = Peminjaman::all()->sum(function ($p) {
+            return $this->hitungDenda($p)['total_denda'];
+        });
+
+        $transaksiTerbaru = Peminjaman::with('anggota')->orderByDesc('created_at')->limit(5)->get();
+
+        return view('Kepala.dashboard', compact(
+            'totalAnggota', 'totalPetugas', 'totalBuku',
+            'totalPinjam', 'totalTerlambat', 'totalDenda', 'transaksiTerbaru'
+        ));
+    }
+
+    // =========================================================
+    // LAPORAN — daftar semua peminjaman
+    // =========================================================
+    public function laporan()
+    {
+        $data = Peminjaman::with('anggota')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($p) {
+                $hasil = $this->hitungDenda($p);
+                $p->hari_terlambat      = $hasil['hari_terlambat'];
+                $p->denda_keterlambatan = $hasil['denda_keterlambatan'];
+                $p->denda_kondisi       = $hasil['denda_kondisi'];
+                $p->denda               = $hasil['total_denda'];
+                return $p;
+            });
+
+        return view('Kepala.laporan', compact('data'));
+    }
+
+    // =========================================================
+    // DETAIL LAPORAN — satu peminjaman
+    // =========================================================
+    public function detailLaporan(Peminjaman $peminjaman)
+    {
+        $hasil = $this->hitungDenda($peminjaman);
+        $peminjaman->hari_terlambat      = $hasil['hari_terlambat'];
+        $peminjaman->denda_keterlambatan = $hasil['denda_keterlambatan'];
+        $peminjaman->denda_kondisi       = $hasil['denda_kondisi'];
+        $peminjaman->denda               = $hasil['total_denda'];
+
+        $peminjaman->load('anggota');
+        return view('Kepala.laporan_detail', compact('peminjaman'));
+    }
+
+    // =========================================================
+    // CETAK PDF — semua laporan
+    // =========================================================
+    public function cetakPdfLaporan()
+    {
+        $data = Peminjaman::with('anggota')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($p) {
+                $hasil = $this->hitungDenda($p);
+                $p->hari_terlambat      = $hasil['hari_terlambat'];
+                $p->denda_keterlambatan = $hasil['denda_keterlambatan'];
+                $p->denda_kondisi       = $hasil['denda_kondisi'];
+                $p->denda               = $hasil['total_denda'];
+                return $p;
+            });
+
+        $pdf = Pdf::loadView('Kepala.laporan_cetak_pdf', compact('data'))
+                  ->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-peminjaman-' . now()->format('d-m-Y') . '.pdf');
+    }
+
+    // =========================================================
+    // CETAK PDF — satu peminjaman
+    // =========================================================
+    public function cetakPdf(Peminjaman $peminjaman)
+    {
+        $hasil = $this->hitungDenda($peminjaman);
+        $peminjaman->hari_terlambat      = $hasil['hari_terlambat'];
+        $peminjaman->denda_keterlambatan = $hasil['denda_keterlambatan'];
+        $peminjaman->denda_kondisi       = $hasil['denda_kondisi'];
+        $peminjaman->denda               = $hasil['total_denda'];
+
+        $peminjaman->load('anggota');
+
+        $pdf = Pdf::loadView('Kepala.laporan_pdf', compact('peminjaman'))
+                  ->setPaper('a4', 'portrait');
+
+        return $pdf->download('laporan-peminjaman-' . $peminjaman->id . '.pdf');
+    }
+
+    // =========================================================
+    // METHOD LAIN (tidak berubah)
+    // =========================================================
     public function profile()
     {
         return view('Kepala.profile', ['user' => Auth::user()]);
@@ -26,10 +171,6 @@ class KepalaController extends Controller
             'phone_number' => 'nullable|string|max:20',
             'foto'         => 'nullable|image|max:2048',
             'password'     => 'nullable|min:6|confirmed',
-        ], [
-            'email.unique'        => 'Email sudah digunakan oleh akun lain.',
-            'password.min'        => 'Password minimal 6 karakter.',
-            'password.confirmed'  => 'Konfirmasi password tidak cocok.',
         ]);
 
         $data = $request->only('name', 'email', 'phone_number');
@@ -43,7 +184,7 @@ class KepalaController extends Controller
                 $old = public_path('images/' . $user->foto);
                 if (file_exists($old)) unlink($old);
             }
-            $file = $request->file('foto');
+            $file     = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('images'), $filename);
             $data['foto'] = $filename;
@@ -51,21 +192,6 @@ class KepalaController extends Controller
 
         $user->update($data);
         return redirect()->route('kepala.profile')->with('success', 'Profil berhasil diperbarui.');
-    }
-
-    public function dashboard()
-    {
-        $totalAnggota  = User::where('role', 'anggota')->count();
-        $totalPetugas  = User::where('role', 'petugas')->count();
-        $totalBuku     = Buku::count();
-        $totalPinjam   = Peminjaman::whereIn('status', ['dipinjam', 'mengembalikan'])->count();
-        $totalTerlambat = Peminjaman::where('status', 'dipinjam')
-                            ->whereNotNull('tgl_jatuh_tempo')
-                            ->where('tgl_jatuh_tempo', '<', now()->toDateString())
-                            ->count();
-        $totalDenda    = Peminjaman::sum('denda');
-        $transaksiTerbaru = Peminjaman::with('anggota')->orderByDesc('created_at')->limit(5)->get();
-        return view('Kepala.dashboard', compact('totalAnggota', 'totalPetugas', 'totalBuku', 'totalPinjam', 'totalTerlambat', 'totalDenda', 'transaksiTerbaru'));
     }
 
     public function katalog()
@@ -97,8 +223,6 @@ class KepalaController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
-        ], [
-            'email.unique' => 'Email sudah digunakan oleh akun lain.',
         ]);
 
         User::create([
@@ -123,10 +247,7 @@ class KepalaController extends Controller
             'email' => 'required|email|unique:users,email,' . $petugas->id,
         ]);
 
-        $petugas->update([
-            'name'  => $request->name,
-            'email' => $request->email,
-        ]);
+        $petugas->update(['name' => $request->name, 'email' => $request->email]);
 
         if ($request->filled('password')) {
             $petugas->update(['password' => Hash::make($request->password)]);
@@ -139,158 +260,5 @@ class KepalaController extends Controller
     {
         $petugas->delete();
         return redirect()->route('kepala.petugas.index')->with('success', 'Akun petugas berhasil dihapus.');
-    }
-
-    // ===== LAPORAN =====
-    public function laporan()
-    {
-        $data = Peminjaman::with('anggota')->orderByDesc('created_at')->get()
-            ->map(function ($p) {
-                // Skip jika tgl_jatuh_tempo belum diisi (status masih 'menunggu')
-                if (!$p->tgl_jatuh_tempo) {
-                    $p->denda = 0;
-                    $p->hari_terlambat = 0;
-                    return $p;
-                }
-                
-                $tglJatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo);
-                
-                if ($p->status === 'dipinjam') {
-                    // Untuk buku yang masih dipinjam, hitung keterlambatan dari sekarang
-                    $hariTerlambat = now()->gt($tglJatuhTempo)
-                        ? now()->diffInDays($tglJatuhTempo) : 0;
-                    $p->denda = $hariTerlambat * 2000;
-                } elseif ($p->status === 'dikembalikan') {
-                    // Untuk buku yang sudah dikembalikan, gunakan nilai denda yang sudah disimpan
-                    $p->denda = $p->denda ?? 0;
-                    if (!$p->denda && $p->tgl_kembali) {
-                        // Hitung ulang jika belum ada denda
-                        $tglKembali = \Carbon\Carbon::parse($p->tgl_kembali);
-                        $hariTerlambat = $tglKembali->gt($tglJatuhTempo)
-                            ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
-                        $p->denda = $hariTerlambat * 2000;
-                    }
-                } else {
-                    $p->denda = 0;
-                }
-                
-                $p->hari_terlambat = $p->denda > 0 ? intval($p->denda / 2000) : 0;
-                return $p;
-            });
-
-        return view('Kepala.laporan', compact('data'));
-    }
-
-    public function detailLaporan(Peminjaman $peminjaman)
-    {
-        // Skip jika tgl_jatuh_tempo belum diisi
-        if (!$peminjaman->tgl_jatuh_tempo) {
-            $peminjaman->denda = 0;
-            $peminjaman->hari_terlambat = 0;
-        } else {
-            $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
-            
-            if ($peminjaman->status === 'dipinjam') {
-                // Untuk buku yang masih dipinjam, hitung keterlambatan dari sekarang
-                $hariTerlambat = now()->gt($tglJatuhTempo)
-                    ? now()->diffInDays($tglJatuhTempo) : 0;
-                $peminjaman->denda = $hariTerlambat * 2000;
-            } elseif ($peminjaman->status === 'dikembalikan') {
-                // Untuk buku yang sudah dikembalikan, gunakan nilai denda yang ada
-                $peminjaman->denda = $peminjaman->denda ?? 0;
-                if (!$peminjaman->denda && $peminjaman->tgl_kembali) {
-                    $tglKembali = \Carbon\Carbon::parse($peminjaman->tgl_kembali);
-                    $hariTerlambat = $tglKembali->gt($tglJatuhTempo)
-                        ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
-                    $peminjaman->denda = $hariTerlambat * 2000;
-                }
-            } else {
-                $peminjaman->denda = 0;
-            }
-            
-            $peminjaman->hari_terlambat = $peminjaman->denda > 0 ? intval($peminjaman->denda / 2000) : 0;
-        }
-        
-        $peminjaman->load('anggota');
-
-        return view('Kepala.laporan_detail', compact('peminjaman'));
-    }
-
-    public function cetakPdfLaporan()
-    {
-        $data = Peminjaman::with('anggota')->orderByDesc('created_at')->get()
-            ->map(function ($p) {
-                // Skip jika tgl_jatuh_tempo belum diisi
-                if (!$p->tgl_jatuh_tempo) {
-                    $p->denda = 0;
-                    $p->hari_terlambat = 0;
-                    return $p;
-                }
-                
-                $tglJatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo);
-                
-                if ($p->status === 'dipinjam') {
-                    // Untuk buku yang masih dipinjam, hitung keterlambatan dari sekarang
-                    $hariTerlambat = now()->gt($tglJatuhTempo)
-                        ? now()->diffInDays($tglJatuhTempo) : 0;
-                    $p->denda = $hariTerlambat * 2000;
-                } elseif ($p->status === 'dikembalikan') {
-                    // Untuk buku yang sudah dikembalikan, gunakan nilai denda yang sudah disimpan
-                    $p->denda = $p->denda ?? 0;
-                    if (!$p->denda && $p->tgl_kembali) {
-                        $tglKembali = \Carbon\Carbon::parse($p->tgl_kembali);
-                        $hariTerlambat = $tglKembali->gt($tglJatuhTempo)
-                            ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
-                        $p->denda = $hariTerlambat * 2000;
-                    }
-                } else {
-                    $p->denda = 0;
-                }
-                
-                $p->hari_terlambat = $p->denda > 0 ? intval($p->denda / 2000) : 0;
-                return $p;
-            });
-        
-        $pdf  = Pdf::loadView('Kepala.laporan_cetak_pdf', compact('data'))
-                   ->setPaper('a4', 'landscape');
-        return $pdf->download('laporan-peminjaman-' . now()->format('d-m-Y') . '.pdf');
-    }
-
-    public function cetakPdf(Peminjaman $peminjaman)
-    {
-        // Skip jika tgl_jatuh_tempo belum diisi
-        if (!$peminjaman->tgl_jatuh_tempo) {
-            $peminjaman->denda = 0;
-            $peminjaman->hari_terlambat = 0;
-        } else {
-            $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
-            
-            if ($peminjaman->status === 'dipinjam') {
-                // Untuk buku yang masih dipinjam, hitung keterlambatan dari sekarang
-                $hariTerlambat = now()->gt($tglJatuhTempo)
-                    ? now()->diffInDays($tglJatuhTempo) : 0;
-                $peminjaman->denda = $hariTerlambat * 2000;
-            } elseif ($peminjaman->status === 'dikembalikan') {
-                // Untuk buku yang sudah dikembalikan, gunakan nilai denda yang ada
-                $peminjaman->denda = $peminjaman->denda ?? 0;
-                if (!$peminjaman->denda && $peminjaman->tgl_kembali) {
-                    $tglKembali = \Carbon\Carbon::parse($peminjaman->tgl_kembali);
-                    $hariTerlambat = $tglKembali->gt($tglJatuhTempo)
-                        ? $tglKembali->diffInDays($tglJatuhTempo) : 0;
-                    $peminjaman->denda = $hariTerlambat * 2000;
-                }
-            } else {
-                $peminjaman->denda = 0;
-            }
-            
-            $peminjaman->hari_terlambat = $peminjaman->denda > 0 ? intval($peminjaman->denda / 2000) : 0;
-        }
-        
-        $peminjaman->load('anggota');
-
-        $pdf = Pdf::loadView('Kepala.laporan_pdf', compact('peminjaman'))
-                  ->setPaper('a4', 'portrait');
-
-        return $pdf->download('laporan-peminjaman-' . $peminjaman->id . '.pdf');
     }
 }

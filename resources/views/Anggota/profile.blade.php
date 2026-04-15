@@ -86,16 +86,18 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-semibold text-gray-600 mb-1">Password Baru</label>
-                <input type="password" name="password"
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-purple-400"
-                       placeholder="Masukkan password baru">
+                 <input type="password" name="password"
+                    autocomplete="new-password"
+                    style="width:100%; padding:8px 12px; border:1px solid #ccc; border-radius:8px; font-size:13px;"
+                    placeholder="Masukkan password baru">
             </div>
 
             <div class="mb-6">
                 <label class="block text-sm font-semibold text-gray-600 mb-1">Konfirmasi Password</label>
                 <input type="password" name="password_confirmation"
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-purple-400"
-                       placeholder="Ulangi password baru">
+                    autocomplete="new-password"
+                    style="width:100%; padding:8px 12px; border:1px solid #ccc; border-radius:8px; font-size:13px;"
+                    placeholder="Ulangi password baru">
             </div>
 
             <button type="submit"

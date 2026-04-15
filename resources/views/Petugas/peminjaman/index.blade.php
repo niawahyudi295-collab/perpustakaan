@@ -17,7 +17,7 @@
 
 <table style="width:100%; border-collapse:collapse;">
     <thead>
-        <tr style="background:#b57ba6; color:white;">
+        <tr style="background:#977868; color:white;">
             <th style="padding:12px;">No</th>
             <th style="padding:12px;">Nama Anggota</th>
             <th style="padding:12px;">Judul Buku</th>
@@ -58,8 +58,14 @@
             <td style="padding:10px;">
                 {{ $p->tgl_kembali ? \Carbon\Carbon::parse($p->tgl_kembali)->format('d/m/Y') : '-' }}
             </td>
+
+            {{-- KOLOM STATUS --}}
             <td style="padding:10px;">
-                @if($p->status === 'menunggu')
+                @if($p->denda >= 50000)
+                    <span style="background:#f8d7da;color:#721c24;padding:3px 10px;border-radius:20px;font-size:12px;">📕 Buku Hilang</span>
+                @elseif($p->denda >= 20000)
+                    <span style="background:#fff3cd;color:#856404;padding:3px 10px;border-radius:20px;font-size:12px;">📙 Buku Rusak</span>
+                @elseif($p->status === 'menunggu')
                     <span style="background:#e3d4f0;color:#6a1b9a;padding:3px 10px;border-radius:20px;font-size:12px;">⏳ Menunggu</span>
                 @elseif($p->status === 'dipinjam' && $terlambat)
                     <span style="background:#f8d7da;color:#721c24;padding:3px 10px;border-radius:20px;font-size:12px;">⚠️ Terlambat</span>
@@ -71,6 +77,8 @@
                     <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:12px;">✅ Dikembalikan</span>
                 @endif
             </td>
+
+            {{-- KOLOM DENDA --}}
             <td style="padding:10px; text-align:center;">
                 <span id="denda-label-{{ $p->id }}" style="color:{{ $p->denda > 0 ? 'red' : '#555' }}; font-weight:{{ $p->denda > 0 ? 'bold' : 'normal' }}; cursor:pointer;" onclick="showDendaEdit({{ $p->id }}, {{ $p->denda }})" title="Klik untuk ubah denda">
                     {{ $p->denda > 0 ? 'Rp '.number_format($p->denda,0,',','.') : '-' }} ✏️
@@ -84,14 +92,14 @@
                             style="background:#aaa;color:white;padding:4px 8px;border:none;border-radius:4px;cursor:pointer;font-size:11px;">✕</button>
                 </form>
             </td>
+
+            {{-- KOLOM AKSI --}}
             <td style="padding:10px;">
-                @php $hasAction = false; @endphp
                 @if($p->status === 'menunggu')
-                    @php $hasAction = true; @endphp
                     <form action="{{ route('petugas.peminjaman.konfirmasi', $p) }}" method="POST" style="display:inline;"
                           onsubmit="return confirm('Konfirmasi peminjaman ini? Jatuh tempo akan ditetapkan 5 hari dari tanggal pinjam.')">
                         @csrf @method('PATCH')
-                        <button style="background:#C8A850;color:#2A2520;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;font-size:12px;font-weight:600;transition: all 0.3s;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
+                        <button style="background:#C8A850;color:#2A2520;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;font-size:12px;font-weight:600;" onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';" onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
                             Konfirmasi
                         </button>
                     </form>
@@ -106,10 +114,26 @@
                 @else
                     <span style="color:#999;font-size:12px;">-</span>
                 @endif
+
                 <a href="{{ route('petugas.peminjaman.edit', $p) }}"
                    style="background:#f0ad4e;color:white;padding:5px 10px;border-radius:5px;font-size:12px;text-decoration:none;display:inline-block;margin-top:4px;">
                     Edit
                 </a>
+
+                {{-- ✅ TOMBOL CETAK STRUK - muncul jika ada denda ATAU sudah dikembalikan --}}
+                @if($p->denda > 0 || $p->status === 'dikembalikan')
+                
+
+                {{-- ✅ TOMBOL CETAK DENDA KECIL - muncul jika ada denda --}}
+                @if($p->denda > 0)
+                <a href="{{ route('petugas.peminjaman.cetak.denda', $p) }}" target="_blank"
+                   style="background:#8b4513;color:white;padding:5px 10px;border-radius:5px;font-size:12px;text-decoration:none;display:inline-block;margin-top:4px; margin-left:2px;"
+                   title="Cetak bukti denda (kertas kecil)">
+                    📄 Denda
+                </a>
+                @endif
+                @endif
+
                 <form action="{{ route('petugas.peminjaman.destroy', $p) }}" method="POST" style="display:inline;"
                       onsubmit="return confirm('Hapus data peminjaman ini?')">
                     @csrf @method('DELETE')

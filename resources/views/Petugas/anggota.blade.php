@@ -6,14 +6,14 @@
 @section('content')
 
 @if(session('success'))
-    <div style="background:#d4edda; color:#155724; padding:10px 15px; border-radius:6px; margin-bottom:15px;">
+    <div style="background:#504840; color:#155724; padding:10px 15px; border-radius:6px; margin-bottom:15px;">
         {{ session('success') }}
     </div>
 @endif
 
 <table style="width:100%; border-collapse:collapse;">
     <thead>
-        <tr style="background:#C8A850; color:#2A2520; font-weight:bold;">
+        <tr style="background:#977868; color:white; font-weight:bold;">
             <th style="padding:12px;">No</th>
             <th style="padding:12px;">Nama</th>
             <th style="padding:12px;">Email</th>

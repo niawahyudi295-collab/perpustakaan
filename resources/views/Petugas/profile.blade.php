@@ -65,15 +65,17 @@
             <div style="margin-bottom:15px;">
                 <label style="display:block; font-weight:bold; font-size:13px; margin-bottom:5px;">Password Baru</label>
                 <input type="password" name="password"
-                       style="width:100%; padding:8px 12px; border:1px solid #ccc; border-radius:8px; font-size:13px;"
-                       placeholder="Masukkan password baru">
+                    autocomplete="new-password"
+                    style="width:100%; padding:8px 12px; border:1px solid #ccc; border-radius:8px; font-size:13px;"
+                    placeholder="Masukkan password baru">
             </div>
 
             <div style="margin-bottom:20px;">
                 <label style="display:block; font-weight:bold; font-size:13px; margin-bottom:5px;">Konfirmasi Password</label>
                 <input type="password" name="password_confirmation"
-                       style="width:100%; padding:8px 12px; border:1px solid #ccc; border-radius:8px; font-size:13px;"
-                       placeholder="Ulangi password baru">
+                    autocomplete="new-password"
+                    style="width:100%; padding:8px 12px; border:1px solid #ccc; border-radius:8px; font-size:13px;"
+                    placeholder="Ulangi password baru">
             </div>
 
             <button type="submit"

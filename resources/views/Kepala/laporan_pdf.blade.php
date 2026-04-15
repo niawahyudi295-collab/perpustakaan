@@ -30,16 +30,6 @@
         table.info td { padding: 8px 10px; border-bottom: 1px solid #eee; }
         table.info td:first-child { width: 40%; color: #666; font-weight: bold; }
 
-        .status-box {
-            padding: 10px 14px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-        .status-terlambat { background: #f5e6cc; color: #504840; border: 1px solid #C8A850; }
-        .status-dipinjam  { background: #e8f4e8; color: #2A2520; border: 1px solid #C8A850; }
-        .status-kembali   { background: #dfe8dc; color: #2A2520; border: 1px solid #C8A850; }
-
         .denda-box {
             background: #f5e6cc;
             border: 1px solid #C8A850;
@@ -47,7 +37,8 @@
             border-radius: 6px;
             margin-top: 10px;
         }
-        .denda-box .nominal { font-size: 22px; font-weight: bold; color: #967830; margin-top: 4px; }
+        .denda-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; color: #504840; }
+        .denda-row.total { border-top: 1px solid #C8A850; margin-top: 6px; padding-top: 8px; font-weight: bold; font-size: 14px; color: #967830; }
 
         .footer {
             margin-top: 40px;
@@ -77,7 +68,19 @@
     <tr><td>No. Transaksi</td><td>#{{ $peminjaman->id }}</td></tr>
     <tr><td>Judul Buku</td><td>{{ $peminjaman->judul_buku }}</td></tr>
     <tr><td>Tanggal Pinjam</td><td>{{ \Carbon\Carbon::parse($peminjaman->tgl_pinjam)->format('d F Y') }}</td></tr>
-    <tr><td>Tanggal Kembali</td><td>{{ $peminjaman->status === 'dipinjam' ? '-' : \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d F Y') }}</td></tr>
+    <tr>
+        <td>Tanggal Kembali</td>
+        <td>{{ $peminjaman->status === 'dipinjam' ? '-' : \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d F Y') }}</td>
+    </tr>
+    <tr>
+        <td>Kondisi Buku</td>
+        <td>
+            @if($peminjaman->kondisi_buku === 'hilang') 📕 Hilang
+            @elseif($peminjaman->kondisi_buku === 'rusak') 📙 Rusak
+            @else ✅ Baik
+            @endif
+        </td>
+    </tr>
     <tr>
         <td>Status</td>
         <td>
@@ -95,12 +98,33 @@
 <div class="section-title">Informasi Denda</div>
 @if($peminjaman->denda > 0)
 <div class="denda-box">
-    <div>Keterlambatan: <strong>{{ $peminjaman->hari_terlambat }} hari</strong> × Rp 2.000/hari</div>
-    <div class="nominal">Rp {{ number_format($peminjaman->denda, 0, ',', '.') }}</div>
+    @if($peminjaman->denda_keterlambatan > 0)
+    <div class="denda-row">
+        <span>Keterlambatan ({{ $peminjaman->hari_terlambat }} hari × Rp 2.000)</span>
+        <span>Rp {{ number_format($peminjaman->denda_keterlambatan, 0, ',', '.') }}</span>
+    </div>
+    @endif
+
+    @if($peminjaman->denda_kondisi > 0)
+    <div class="denda-row">
+        <span>
+            @if($peminjaman->kondisi_buku === 'hilang') Buku Hilang
+            @else Buku Rusak
+            @endif
+        </span>
+        <span>Rp {{ number_format($peminjaman->denda_kondisi, 0, ',', '.') }}</span>
+    </div>
+    @endif
+
+    <div class="denda-row total">
+        <span>Total Denda</span>
+        <span>Rp {{ number_format($peminjaman->denda, 0, ',', '.') }}</span>
+    </div>
 </div>
 @else
 <table class="info">
     <tr><td>Keterlambatan</td><td>-</td></tr>
+    <tr><td>Kondisi Buku</td><td>Baik</td></tr>
     <tr><td>Total Denda</td><td><strong style="color:#155724;">Tidak ada denda</strong></td></tr>
 </table>
 @endif

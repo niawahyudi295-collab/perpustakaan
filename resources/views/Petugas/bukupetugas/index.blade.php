@@ -6,7 +6,7 @@
 @section('content')
 
 @if(session('success'))
-    <div style="background:#d4edda; color:#155724; padding:10px 15px; border-radius:6px; margin-bottom:15px;">
+    <div style="background:#d4edda; color:#977868; padding:10px 15px; border-radius:6px; margin-bottom:15px;">
         {{ session('success') }}
     </div>
 @endif
@@ -20,7 +20,7 @@
 
 <table style="width:100%; border-collapse:collapse;">
     <thead>
-        <tr style="background:#b57ba6; color:white;">
+        <tr style="background:#977868; color:white;">
             <th style="padding:12px;">Cover</th>
             <th style="padding:12px;">Judul</th>
             <th style="padding:12px;">Kategori</th>

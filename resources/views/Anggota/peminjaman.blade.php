@@ -27,6 +27,7 @@
                 <th class="px-4 py-3 text-center">Tgl Kembali</th>
                 <th class="px-4 py-3 text-center">Status</th>
                 <th class="px-4 py-3 text-center">Denda</th>
+                <th class="px-4 py-3 text-center">Aksi</th>
                 
             </tr>
         </thead>
@@ -56,7 +57,7 @@
                         <span style="background:#e3d4f0;color:#6a1b9a;padding:3px 10px;border-radius:20px;font-size:11px;">⏳ Menunggu</span>
                     @elseif($p->status === 'dipinjam' && $hariTerlambat > 0)
                         <span style="background:#f8d7da;color:#721c24;padding:3px 10px;border-radius:20px;font-size:11px;">⚠️ Terlambat</span>
-                    @elseif($p->status === 'dipinjam')
+                    @elseif($p->status === 'terlambat')
                         <span style="background:#fff3cd;color:#856404;padding:3px 10px;border-radius:20px;font-size:11px;">Dipinjam</span>
                     @elseif($p->status === 'mengembalikan')
                         <span style="background:#cce5ff;color:#004085;padding:3px 10px;border-radius:20px;font-size:11px;">🔄 Menunggu Konfirmasi</span>

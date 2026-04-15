@@ -61,12 +61,25 @@
                 <option value="dipinjam"      {{ $peminjaman->status == 'dipinjam'      ? 'selected' : '' }}>Dipinjam</option>
                 <option value="mengembalikan" {{ $peminjaman->status == 'mengembalikan' ? 'selected' : '' }}>Mengembalikan</option>
                 <option value="dikembalikan"  {{ $peminjaman->status == 'dikembalikan'  ? 'selected' : '' }}>Dikembalikan</option>
+                 <option value="hilang"       {{ $peminjaman->status == 'hilang'  ? '      selected' : '' }}>Hilang</option>
             </select>
         </div>
 
+        {{-- ✅ Kondisi Buku - ditaruh SEBELUM denda supaya bisa autofill --}}
+        <div style="margin-bottom:15px;">
+            <label style="display:block; font-weight:bold; margin-bottom:5px;">Kondisi Buku</label>
+            <select id="kondisi" name="kondisi" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
+                <option value="baik"   {{ ($peminjaman->kondisi ?? 'baik') == 'baik'   ? 'selected' : '' }}>Baik</option>
+                <option value="rusak"  {{ ($peminjaman->kondisi ?? '') == 'rusak'  ? 'selected' : '' }}>Rusak (+Rp 20.000)</option>
+                <option value="hilang" {{ ($peminjaman->kondisi ?? '') == 'hilang' ? 'selected' : '' }}>Hilang (+Rp 50.000)</option>
+            </select>
+            <small style="color:#888; font-size:11px;">Pilih kondisi → denda otomatis terisi. Bisa diubah manual.</small>
+        </div>
+
+        {{-- ✅ Denda - hanya SATU input (duplikat sudah dihapus) --}}
         <div style="margin-bottom:20px;">
             <label style="display:block; font-weight:bold; margin-bottom:5px;">Denda (Rp)</label>
-            <input type="number" name="denda" value="{{ old('denda', $peminjaman->denda) }}" min="0"
+            <input type="number" name="denda" id="denda" value="{{ old('denda', $peminjaman->denda) }}" min="0"
                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:8px;">
         </div>
 
@@ -82,5 +95,21 @@
         </div>
     </form>
 </div>
+
+{{-- ✅ Script kondisi autofill denda - HARUS di edit, bukan di index --}}
+<script>
+document.getElementById('kondisi').addEventListener('change', function() {
+    let dendaInput = document.getElementById('denda');
+
+    if (this.value === 'rusak') {
+        dendaInput.value = 20000;
+    } else if (this.value === 'hilang') {
+        dendaInput.value = 50000;
+    } else {
+        // kondisi baik: kosongkan denda kalau sebelumnya diisi dari kondisi
+        // (biarkan petugas isi manual kalau masih ada denda telat)
+    }
+});
+</script>
 
 @endsection
