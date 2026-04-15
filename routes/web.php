@@ -91,11 +91,12 @@ Route::middleware(['auth', 'role:kepala'])->prefix('kepala')->name('kepala.')->g
     Route::get('/katalog', [KepalaController::class, 'katalog'])->name('katalog');
     Route::get('/anggota', [KepalaController::class, 'indexAnggota'])->name('anggota.index');
     Route::get('/laporan', [KepalaController::class, 'laporan'])->name('laporan');
+    Route::get('/laporan/cetak/pdf', [KepalaController::class, 'cetakPdfLaporan'])->name('laporan.cetak.pdf');
     Route::get('/laporan/{peminjaman}', [KepalaController::class, 'detailLaporan'])->name('laporan.detail');
     Route::get('/laporan/{peminjaman}/pdf', [KepalaController::class, 'cetakPdf'])->name('laporan.pdf');
-    Route::get('/laporan/cetak/pdf', [KepalaController::class, 'cetakPdfLaporan'])->name('laporan.cetak.pdf');
     Route::get('/profile', [KepalaController::class, 'profile'])->name('profile');
     Route::put('/profile', [KepalaController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/kepala/laporan', [KepalaController::class, 'laporan'])->name('kepala.laporan');
 
     // Menambah Petugas
     Route::get('/petugas', [KepalaController::class, 'indexPetugas'])->name('petugas.index');

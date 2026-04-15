@@ -308,7 +308,7 @@
 
             {{-- Header --}}
             <div class="header">
-                <div class="title">KWI. DENDA</div>
+                <div class="title">KWITANSI. DENDA</div>
                 <div class="subtitle">Perpustakaan</div>
             </div>
 

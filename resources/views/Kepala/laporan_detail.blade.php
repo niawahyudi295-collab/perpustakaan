@@ -1,118 +1,315 @@
 @extends('Kepala.layouts')
 
-@section('title', 'Detail Laporan')
-@section('header', 'Detail Laporan Peminjaman')
+@section('title', 'Detail Peminjaman')
+@section('header', 'DETAIL PEMINJAMAN')
 
 @section('content')
 
-<div class="mb-4 flex justify-between items-center">
-    <a href="{{ route('kepala.laporan') }}"
-       class="text-sm hover:underline transition" style="color: #967830;">← Kembali ke Laporan</a>
-    <div class="flex items-center gap-3">
-        <span class="text-xs" style="color: #504840;">Dilihat: {{ now()->format('d F Y, H:i:s') }} WIB</span>
-        <a href="{{ route('kepala.laporan.pdf', $peminjaman->id) }}"
-           style="background:#C8A850; color:#2A2520; padding:8px 20px; border-radius:6px; text-decoration:none; font-size:14px; font-weight:bold;"
-           onmouseover="this.style.backgroundColor='#967830'" onmouseout="this.style.backgroundColor='#C8A850'">
-            🖨️ Cetak PDF
-        </a>
+@php
+    $denda = $peminjaman->denda ?? 0;
+    $dendaKondisi = $peminjaman->denda_kondisi ?? 0;
+    $dendaTerlambat = $peminjaman->denda_keterlambatan ?? 0;
+    $hariTerlambat = $peminjaman->hari_terlambat ?? 0;
+    
+    // Keterangan denda
+    $keteranganDenda = [];
+    if ($dendaKondisi > 0) {
+        if ($peminjaman->kondisi === 'hilang') {
+            $keteranganDenda[] = '📕 Buku Hilang: Rp 50.000';
+        } elseif ($peminjaman->kondisi === 'rusak') {
+            $keteranganDenda[] = '📙 Buku Rusak: Rp 20.000';
+        }
+    }
+    if ($hariTerlambat > 0) {
+        $keteranganDenda[] = "⏰ Terlambat {$hariTerlambat} hari × Rp 2.000 = Rp " . number_format($dendaTerlambat, 0, ',', '.');
+    }
+@endphp
+
+<style>
+.card-custom {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    margin-bottom: 16px;
+    border-left: 4px solid #C8A850;
+}
+
+.card-custom.danger { border-left-color: #e74c3c; }
+.card-custom.success { border-left-color: #27ae60; }
+
+.card-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #382e2e;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-label {
+    font-weight: 600;
+    color: #504840;
+    font-size: 13px;
+}
+
+.info-value {
+    color: #382e2e;
+    font-size: 13px;
+}
+
+.badge-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.btn-back {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-back:hover {
+    background: #5a6268;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-print-detail {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-print-detail:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+    color: white;
+    text-decoration: none;
+}
+
+.denda-container {
+    background: linear-gradient(135deg, #fef9ec, #fffaf0);
+    border-left: 4px solid #f39c12;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+.denda-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 13px;
+}
+
+.denda-total {
+    font-weight: 700;
+    font-size: 16px;
+    color: #e74c3c;
+    border-top: 2px solid #f39c12;
+    padding-top: 8px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+</style>
+
+{{-- Header --}}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+    <div>
+        <div style="font-size: 12px; color: #967830; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Detail Transaksi</div>
+        <div style="font-size: 24px; font-weight: bold; color: #382e2e;">Peminjaman No. #{{ $peminjaman->id }}</div>
     </div>
+    <a href="{{ route('kepala.laporan') }}" class="btn-back">
+        ← Kembali
+    </a>
 </div>
 
-<div class="bg-white rounded-xl shadow p-8 max-w-2xl">
-
-    <h3 class="text-lg font-bold mb-6 pb-3 border-b" style="color:#C8A850; border-color:#C8A850;">
-        Informasi Peminjaman #{{ $peminjaman->id }}
-    </h3>
-
-    <div class="grid grid-cols-2 gap-y-4 text-sm">
-        <div style="color:#504840;" class="font-medium">Nama Anggota</div>
-        <div class="font-semibold">{{ $peminjaman->anggota->name ?? '-' }}</div>
-
-        <div style="color:#504840;" class="font-medium">Email Anggota</div>
-        <div>{{ $peminjaman->anggota->email ?? '-' }}</div>
-
-        <div style="color:#504840;" class="font-medium">Judul Buku</div>
-        <div class="font-semibold">{{ $peminjaman->judul_buku }}</div>
-
-        <div style="color:#504840;" class="font-medium">Tanggal Pinjam</div>
-        <div>{{ \Carbon\Carbon::parse($peminjaman->tgl_pinjam)->format('d F Y') }}</div>
-
-        <div style="color:#504840;" class="font-medium">Tanggal Kembali</div>
-        <div class="{{ $peminjaman->hari_terlambat > 0 ? 'font-bold' : '' }}"
-             style="color: {{ $peminjaman->hari_terlambat > 0 ? '#967830' : '#000' }};">
-            {{ $peminjaman->status === 'dipinjam' ? '-' : \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d F Y') }}
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+    
+    {{-- Main Info --}}
+    <div>
+        {{-- Info Anggota --}}
+        <div class="card-custom">
+            <div class="card-title">👤 Informasi Anggota</div>
+            <div class="info-row">
+                <div class="info-label">Nama Anggota</div>
+                <div class="info-value" style="font-weight: 700; color: #C8A850;">{{ $peminjaman->anggota->name ?? '-' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">ID Anggota</div>
+                <div class="info-value">#{{ $peminjaman->anggota_id }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ $peminjaman->anggota->email ?? '-' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Nomor Telepon</div>
+                <div class="info-value">{{ $peminjaman->anggota->phone_number ?? '-' }}</div>
+            </div>
         </div>
 
-        <div style="color:#504840;" class="font-medium">Kondisi Buku</div>
-        <div>
-            @if($peminjaman->kondisi_buku === 'hilang')
-                <span style="background:#f8d7da; color:#721c24; padding:3px 12px; border-radius:20px;">📕 Hilang</span>
-            @elseif($peminjaman->kondisi_buku === 'rusak')
-                <span style="background:#fff3cd; color:#856404; padding:3px 12px; border-radius:20px;">📙 Rusak</span>
-            @else
-                <span style="background:#d4edda; color:#155724; padding:3px 12px; border-radius:20px;">✅ Baik</span>
-            @endif
-        </div>
-
-        <div style="color:#504840;" class="font-medium">Status</div>
-        <div>
-            @if($peminjaman->status === 'dipinjam' && $peminjaman->hari_terlambat > 0)
-                <span style="background:#f5e6cc; color:#967830; padding:3px 12px; border-radius:20px;">
-                    ⚠️ Terlambat {{ $peminjaman->hari_terlambat }} hari
-                </span>
-            @elseif($peminjaman->status === 'dipinjam')
-                <span style="background:#e8f4e8; color:#2A2520; padding:3px 12px; border-radius:20px;">
-                    Dipinjam
-                </span>
-            @else
-                <span style="background:#dfe8dc; color:#2A2520; padding:3px 12px; border-radius:20px;">
-                    Dikembalikan
-                </span>
-            @endif
-        </div>
-
-        <div style="color:#504840;" class="font-medium">Keterlambatan</div>
-        <div class="{{ $peminjaman->hari_terlambat > 0 ? 'font-bold' : '' }}"
-             style="color: {{ $peminjaman->hari_terlambat > 0 ? '#967830' : '#C8A850' }};">
-            {{ $peminjaman->hari_terlambat > 0 ? $peminjaman->hari_terlambat . ' hari' : '-' }}
-        </div>
-
-        {{-- Rincian denda --}}
-        <div style="color:#504840;" class="font-medium">Denda Keterlambatan</div>
-        <div style="color: {{ $peminjaman->denda_keterlambatan > 0 ? '#967830' : '#C8A850' }}; font-weight: {{ $peminjaman->denda_keterlambatan > 0 ? 'bold' : 'normal' }};">
-            {{ $peminjaman->denda_keterlambatan > 0 ? 'Rp ' . number_format($peminjaman->denda_keterlambatan, 0, ',', '.') : '-' }}
-        </div>
-
-        <div style="color:#504840;" class="font-medium">Denda Kondisi Buku</div>
-        <div style="color: {{ $peminjaman->denda_kondisi > 0 ? '#967830' : '#C8A850' }}; font-weight: {{ $peminjaman->denda_kondisi > 0 ? 'bold' : 'normal' }};">
-            {{ $peminjaman->denda_kondisi > 0 ? 'Rp ' . number_format($peminjaman->denda_kondisi, 0, ',', '.') : '-' }}
-        </div>
-
-        <div style="color:#504840;" class="font-medium">Total Denda</div>
-        <div class="{{ $peminjaman->denda > 0 ? 'font-bold text-base' : '' }}"
-             style="color: {{ $peminjaman->denda > 0 ? '#967830' : '#C8A850' }};">
-            {{ $peminjaman->denda > 0 ? 'Rp ' . number_format($peminjaman->denda, 0, ',', '.') : 'Tidak ada denda' }}
+        {{-- Info Buku & Peminjaman --}}
+        <div class="card-custom">
+            <div class="card-title">📚 Informasi Buku & Peminjaman</div>
+            <div class="info-row">
+                <div class="info-label">Judul Buku</div>
+                <div class="info-value">{{ $peminjaman->judul_buku ?? '-' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Kondisi Buku</div>
+                <div class="info-value">
+                    @if($peminjaman->kondisi === 'hilang')
+                        <span class="badge-status" style="background: #f8d7da; color: #721c24;">📕 Hilang</span>
+                    @elseif($peminjaman->kondisi === 'rusak')
+                        <span class="badge-status" style="background: #ffeaa7; color: #856400;">📙 Rusak</span>
+                    @else
+                        <span class="badge-status" style="background: #d4edda; color: #155724;">✅ Baik</span>
+                    @endif
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Tanggal Pinjam</div>
+                <div class="info-value">{{ \Carbon\Carbon::parse($peminjaman->tgl_pinjam)->format('d F Y') }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Jatuh Tempo</div>
+                <div class="info-value" style="color: {{ \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo)->isPast() && $peminjaman->status === 'dipinjam' ? '#e74c3c' : '#27ae60' }}; font-weight: 600;">
+                    {{ $peminjaman->tgl_jatuh_tempo ? \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo)->format('d F Y') : '-' }}
+                    @if(\Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo)->isPast() && $peminjaman->status === 'dipinjam')
+                        <span style="color: #e74c3c; font-size: 11px;"> (TERLAMBAT)</span>
+                    @endif
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Tanggal Kembali</div>
+                <div class="info-value">{{ $peminjaman->tgl_kembali ? \Carbon\Carbon::parse($peminjaman->tgl_kembali)->format('d F Y') : '—' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Status Peminjaman</div>
+                <div class="info-value">
+                    @php
+                        $statusColors = [
+                            'dipinjam' => ['bg' => '#fff3cd', 'text' => '#856404', 'label' => 'Sedang Dipinjam'],
+                            'mengembalikan' => ['bg' => '#cce5ff', 'text' => '#004085', 'label' => 'Menunggu Pengembalian'],
+                            'dikembalikan' => ['bg' => '#d4edda', 'text' => '#155724', 'label' => '✓ Sudah Dikembalikan'],
+                            'hilang' => ['bg' => '#f8d7da', 'text' => '#721c24', 'label' => '📕 Buku Hilang'],
+                            'rusak' => ['bg' => '#ffeaa7', 'text' => '#856400', 'label' => '📙 Buku Rusak'],
+                            'terlambat' => ['bg' => '#f8d7da', 'text' => '#721c24', 'label' => '⚠️ Terlambat'],
+                        ];
+                        
+                        // Tentukan status berdasarkan denda
+                        if ($peminjaman->denda >= 50000) {
+                            $displayStatus = 'hilang';
+                        } elseif ($peminjaman->denda >= 20000) {
+                            $displayStatus = 'rusak';
+                        } elseif ($peminjaman->denda > 0) {
+                            $displayStatus = 'terlambat';
+                        } else {
+                            $displayStatus = strtolower($peminjaman->status);
+                        }
+                        
+                        $colors = $statusColors[$displayStatus] ?? ['bg' => '#e2e3e5', 'text' => '#383d41', 'label' => $peminjaman->status];
+                    @endphp
+                    <span class="badge-status" style="background: {{ $colors['bg'] }}; color: {{ $colors['text'] }};">
+                        {{ $colors['label'] }}
+                    </span>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Petugas</div>
+                <div class="info-value">{{ auth()->user()->name ?? '-' }}</div>
+            </div>
         </div>
     </div>
 
-    @if($peminjaman->denda > 0)
-    <div class="mt-6 p-4 rounded-lg" style="background:#f5e6cc; border:1px solid #C8A850;">
-        <p class="text-sm font-semibold" style="color:#504840;">
-            @if($peminjaman->kondisi_buku === 'hilang')
-                ⚠️ Buku dinyatakan <b>hilang</b> — denda Rp {{ number_format($peminjaman->denda_kondisi, 0, ',', '.') }}
+    {{-- Sidebar Info Denda --}}
+    <div>
+        {{-- Denda Info --}}
+        <div class="card-custom {{ $denda > 0 ? 'danger' : 'success' }}">
+            <div class="card-title">💰 Informasi Denda</div>
+            
+            @if($denda > 0)
+                <div class="denda-container">
+                    @foreach($keteranganDenda as $ket)
+                        <div class="denda-item">
+                            <span>{{ $ket }}</span>
+                        </div>
+                    @endforeach
+                    <div class="denda-total">
+                        <span>Total Denda</span>
+                        <span>Rp {{ number_format($denda, 0, ',', '.') }}</span>
+                    </div>
+                </div>
+            @else
+                <div style="text-align: center; padding: 30px 0;">
+                    <div style="font-size: 40px; margin-bottom: 12px;">✓</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #27ae60; margin-bottom: 4px;">Tidak Ada Denda</div>
+                    <div style="font-size: 12px; color: #999;">Peminjaman ini tidak memiliki denda</div>
+                </div>
             @endif
-            @if($peminjaman->kondisi_buku === 'rusak')
-                ⚠️ Buku dalam kondisi <b>rusak</b> — denda Rp {{ number_format($peminjaman->denda_kondisi, 0, ',', '.') }}
-            @endif
-            @if($peminjaman->hari_terlambat > 0)
-                @if($peminjaman->kondisi_buku !== 'baik') <br> @endif
-                ⚠️ Terlambat <b>{{ $peminjaman->hari_terlambat }} hari</b>
-                (Rp 2.000 × {{ $peminjaman->hari_terlambat }} hari = Rp {{ number_format($peminjaman->denda_keterlambatan, 0, ',', '.') }})
-            @endif
-        </p>
-    </div>
-    @endif
+        </div>
 
+        {{-- Ketentuan Denda --}}
+        <div class="card-custom">
+            <div class="card-title">📌 Ketentuan Denda</div>
+            <div style="font-size: 12px; color: #504840; line-height: 1.8;">
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <span>📕</span>
+                    <div><strong>Buku Hilang:</strong> Rp 50.000 (flat)</div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <span>📙</span>
+                    <div><strong>Buku Rusak:</strong> Rp 20.000 (flat)</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <span>⏰</span>
+                    <div><strong>Terlambat:</strong> Rp 2.000/hari</div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Action Button --}}
+        <a href="{{ route('kepala.laporan.pdf', $peminjaman->id) }}" target="_blank" class="btn-print-detail">
+            📄 Cetak PDF Detail
+        </a>
+    </div>
 </div>
 
 @endsection

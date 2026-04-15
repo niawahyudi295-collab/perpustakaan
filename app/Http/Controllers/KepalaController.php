@@ -14,6 +14,8 @@ class KepalaController extends Controller
 {
     // =========================================================
     // HELPER — satu tempat untuk semua logika hitung denda
+    // CATATAN: Menggunakan denda dari database (input petugas),
+    // breakdown dihitung hanya untuk info display
     // =========================================================
     private function hitungDenda(Peminjaman $p): array
     {
@@ -21,7 +23,7 @@ class KepalaController extends Controller
         $dendaKeterlambatan = 0;
         $dendaKondisi       = 0;
 
-        // 1. Hitung keterlambatan
+        // 1. Hitung hari terlambat (untuk display info saja)
         if ($p->tgl_jatuh_tempo) {
             $jatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo)->startOfDay();
 
@@ -35,18 +37,21 @@ class KepalaController extends Controller
             $dendaKeterlambatan = $hariTerlambat * 2000;
         }
 
-        // 2. Hitung denda kondisi buku — PAKAI kondisi_buku bukan kondisi
-        if ($p->kondisi_buku === 'hilang') {
+        // 2. Hitung denda kondisi dari status (untuk display info saja)
+        if ($p->kondisi === 'hilang') {
             $dendaKondisi = 50000;
-        } elseif ($p->kondisi_buku === 'rusak') {
+        } elseif ($p->kondisi === 'rusak') {
             $dendaKondisi = 20000;
         }
+
+        // 3. TOTAL DENDA DARI DATABASE (input petugas), bukan hasil perhitungan
+        $totalDenda = (int) ($p->denda ?? 0);
 
         return [
             'hari_terlambat'      => $hariTerlambat,
             'denda_keterlambatan' => $dendaKeterlambatan,
             'denda_kondisi'       => $dendaKondisi,
-            'total_denda'         => $dendaKeterlambatan + $dendaKondisi,
+            'total_denda'         => $totalDenda,  // ← DARI DATABASE
         ];
     }
 

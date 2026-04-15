@@ -75,8 +75,8 @@
     <tr>
         <td>Kondisi Buku</td>
         <td>
-            @if($peminjaman->kondisi_buku === 'hilang') 📕 Hilang
-            @elseif($peminjaman->kondisi_buku === 'rusak') 📙 Rusak
+            @if($peminjaman->kondisi === 'hilang') 📕 Hilang
+            @elseif($peminjaman->kondisi === 'rusak') 📙 Rusak
             @else ✅ Baik
             @endif
         </td>
@@ -84,13 +84,26 @@
     <tr>
         <td>Status</td>
         <td>
-            @if($peminjaman->status === 'dipinjam' && $peminjaman->hari_terlambat > 0)
-                <strong style="color:#721c24;">Terlambat {{ $peminjaman->hari_terlambat }} hari</strong>
-            @elseif($peminjaman->status === 'dipinjam')
-                <strong style="color:#856404;">Sedang Dipinjam</strong>
-            @else
-                <strong style="color:#155724;">Sudah Dikembalikan</strong>
-            @endif
+            @php
+                // Tentukan status berdasarkan denda
+                if ($peminjaman->denda >= 50000) {
+                    $statusDisplay = '📕 Buku Hilang';
+                    $statusColor = '#721c24';
+                } elseif ($peminjaman->denda >= 20000) {
+                    $statusDisplay = '📙 Buku Rusak';
+                    $statusColor = '#f39c12';
+                } elseif ($peminjaman->denda > 0) {
+                    $statusDisplay = '⚠️ Terlambat ' . ($peminjaman->hari_terlambat ?? 0) . ' hari';
+                    $statusColor = '#721c24';
+                } elseif ($peminjaman->status === 'dipinjam') {
+                    $statusDisplay = 'Sedang Dipinjam';
+                    $statusColor = '#856404';
+                } else {
+                    $statusDisplay = 'Sudah Dikembalikan';
+                    $statusColor = '#155724';
+                }
+            @endphp
+            <strong style="color:{{ $statusColor }};">{{ $statusDisplay }}</strong>
         </td>
     </tr>
 </table>
@@ -108,7 +121,7 @@
     @if($peminjaman->denda_kondisi > 0)
     <div class="denda-row">
         <span>
-            @if($peminjaman->kondisi_buku === 'hilang') Buku Hilang
+            @if($peminjaman->kondisi === 'hilang') Buku Hilang
             @else Buku Rusak
             @endif
         </span>

@@ -18,17 +18,13 @@ class Peminjaman extends Model
         'tgl_jatuh_tempo',
         'tgl_kembali',
         'status',
-        'denda'
+        'denda',
+        'kondisi'
     ];
 
     public function anggota()
     {
         return $this->belongsTo(User::class, 'anggota_id');
     }
-
-    public function getHariTerlambatAttribute()
-{
-    return $this->denda > 0 ? intval($this->denda / 2000) : 0;
-}
 
 }
