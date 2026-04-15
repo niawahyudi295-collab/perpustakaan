@@ -106,7 +106,7 @@
         <div style="font-size: 12px; color: #967830; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Data Peminjaman</div>
         <div style="font-size: 24px; font-weight: bold; color: #382e2e;">Laporan Semua Peminjaman Buku</div>
     </div>
-    <a href="{{ route('kepala.laporan.cetak.pdf') }}" target="_blank" class="btn-print">
+    <a href="{{ route('kepala.laporan.cetak.pdf', ['bulan' => $bulan ?? now()->format('Y-m')]) }}" target="_blank" class="btn-print">
         📄 Cetak PDF Semua
     </a>
 </div>
@@ -148,13 +148,43 @@
 {{-- Data Table --}}
 <div class="data-table">
     <div style="padding: 20px 24px; border-bottom: 1px solid #e0d5c5;">
-        <div style="font-size: 14px; font-weight: bold; color: #382e2e;">📋 Daftar Peminjaman</div>
-        <div style="font-size: 12px; color: #999; margin-top: 4px;">Total: {{ count($data) }} data</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+            <div>
+                <div style="font-size: 14px; font-weight: bold; color: #382e2e;">📋 Daftar Peminjaman</div>
+                <div style="font-size: 12px; color: #999; margin-top: 4px;">Total: {{ count($data) }} data</div>
+            </div>
+
+            {{-- FILTER BULAN & NAMA ANGGOTA --}}
+            <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                <div>
+                    <label style="display: block; font-size: 11px; color: #504840; font-weight: 600; margin-bottom: 5px; text-transform: uppercase;">Filter Bulan</label>
+                    <form method="GET" action="{{ route('kepala.laporan') }}" style="display: flex; gap: 8px;">
+                        <input type="month" name="bulan" value="{{ $bulan ?? now()->format('Y-m') }}"
+                               style="padding:8px 12px; border:1px solid #ddd; border-radius:8px; font-size:13px; outline:none; transition: border 0.2s;"
+                               onfocus="this.style.border='1px solid #C8A850'"
+                               onblur="this.style.border='1px solid #ddd'">
+                        <button type="submit" style="background:#C8A850; color:#2A2520; padding:8px 16px; border:none; border-radius:8px; font-weight:600; cursor:pointer; font-size:12px; transition:all 0.3s;"
+                                onmouseover="this.style.background='#967830'; this.style.color='#F5F2EE';"
+                                onmouseout="this.style.background='#C8A850'; this.style.color='#2A2520';">
+                            Filter
+                        </button>
+                    </form>
+                </div>
+
+                {{-- FILTER NAMA ANGGOTA --}}
+                <input type="text" id="filterAnggota" placeholder="🔍 Cari nama anggota..."
+                       onkeyup="filterAnggota()"
+                       style="padding:8px 14px; border:1px solid #ddd; border-radius:8px; font-size:13px; width:240px; outline:none; transition: border 0.2s;"
+                       onfocus="this.style.border='1px solid #C8A850'"
+                       onblur="this.style.border='1px solid #ddd'">
+            </div>
+        </div>
+        <div style="font-size: 11px; color: #967830; font-weight: 600;">📅 Rekap Bulan: <strong>{{ \Carbon\Carbon::createFromFormat('Y-m', $bulan ?? now()->format('Y-m'))->format('F Y') }}</strong></div>
     </div>
 
     @if(count($data) > 0)
     <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse;">
+        <table id="tabelLaporan" style="width: 100%; border-collapse: collapse;">
             <thead class="table-header">
                 <tr>
                     <th style="padding: 12px; text-align: center;">No</th>
@@ -196,8 +226,7 @@
                                 'rusak' => ['bg' => '#ffeaa7', 'text' => '#856400', 'label' => '📙 Buku Rusak'],
                                 'terlambat' => ['bg' => '#f8d7da', 'text' => '#721c24', 'label' => '⚠️ Terlambat'],
                             ];
-                            
-                            // Tentukan status berdasarkan denda
+
                             if ($p->denda >= 50000) {
                                 $displayStatus = 'hilang';
                             } elseif ($p->denda >= 20000) {
@@ -207,7 +236,7 @@
                             } else {
                                 $displayStatus = strtolower($p->status);
                             }
-                            
+
                             $colors = $statusColors[$displayStatus] ?? ['bg' => '#e2e3e5', 'text' => '#383d41', 'label' => $p->status];
                         @endphp
                         <span style="background: {{ $colors['bg'] }}; color: {{ $colors['text'] }}; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block;">
@@ -250,5 +279,16 @@
     </div>
     @endif
 </div>
+
+<script>
+function filterAnggota() {
+    const input = document.getElementById('filterAnggota').value.toLowerCase();
+    const rows = document.querySelectorAll('#tabelLaporan tbody tr');
+    rows.forEach(row => {
+        const namaAnggota = row.cells[1]?.textContent.toLowerCase() || '';
+        row.style.display = namaAnggota.includes(input) ? '' : 'none';
+    });
+}
+</script>
 
 @endsection

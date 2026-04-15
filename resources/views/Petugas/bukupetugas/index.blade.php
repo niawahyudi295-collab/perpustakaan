@@ -18,8 +18,22 @@
     </a>
 </div>
 
+{{-- FILTER KATEGORI --}}
+<div style="margin-bottom:15px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <span style="font-size:13px; font-weight:600; color:#555;">Filter Kategori:</span>
+    <button onclick="filterKategori('semua')"
+            style="padding:6px 14px; border-radius:20px; border:none; background:#977868; color:white; cursor:pointer; font-size:12px;">
+        Semua
+    </button>
+    @foreach($buku->pluck('kategori')->unique()->filter() as $kat)
+    <button onclick="filterKategori('{{ $kat }}')"
+            style="padding:6px 14px; border-radius:20px; border:1px solid #977868; background:white; color:#977868; cursor:pointer; font-size:12px;">
+        {{ $kat }}
+    </button>
+    @endforeach
+</div>
 
-<table style="width:100%; border-collapse:collapse;">
+<table id="tabelBuku" style="width:100%; border-collapse:collapse;">
     <thead>
         <tr style="background:#977868; color:white;">
             <th style="padding:12px;">Cover</th>
@@ -50,13 +64,21 @@
             <td style="padding:10px;">{{ $b->tahun ?? '-' }}</td>
             <td style="padding:10px;">{{ $b->stok ?? $b->jumlah }}</td>
             <td style="padding:10px;">
-                <a href="{{ route('petugas.bukupetugas.edit', $b->id) }}"
-                   style="background:#f0ad4e; color:white; padding:5px 10px; text-decoration:none; border-radius:5px; font-size:12px;">Edit</a>
-                <form action="{{ route('petugas.bukupetugas.destroy', $b->id) }}" method="POST" style="display:inline;"
-                      onsubmit="return confirm('Hapus buku ini?')">
-                    @csrf @method('DELETE')
-                    <button style="background:red; color:white; padding:5px 10px; border:none; border-radius:5px; cursor:pointer; font-size:12px;">Hapus</button>
-                </form>
+                <div style="display:flex; gap:6px; justify-content:center; align-items:center;">
+                    <a href="{{ route('petugas.bukupetugas.edit', $b->id) }}"
+                       style="background:#f0ad4e; color:white; padding:5px 10px; text-decoration:none; border-radius:5px; font-size:12px;">
+                        Edit
+                    </a>
+                    <form action="{{ route('petugas.bukupetugas.destroy', $b->id) }}" method="POST"
+                          onsubmit="return confirm('Hapus buku ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                                style="background:red; color:white; padding:5px 10px; border:none; border-radius:5px; cursor:pointer; font-size:12px;">
+                            Hapus
+                        </button>
+                    </form>
+                </div>
             </td>
         </tr>
         @empty
@@ -64,5 +86,19 @@
         @endforelse
     </tbody>
 </table>
+
+<script>
+function filterKategori(kat) {
+    const rows = document.querySelectorAll('#tabelBuku tbody tr');
+    rows.forEach(row => {
+        if (kat === 'semua') {
+            row.style.display = '';
+        } else {
+            const kategoriCell = row.cells[2]?.textContent.trim() || '';
+            row.style.display = kategoriCell === kat ? '' : 'none';
+        }
+    });
+}
+</script>
 
 @endsection

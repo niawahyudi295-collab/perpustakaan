@@ -23,21 +23,25 @@ class KepalaController extends Controller
         $dendaKeterlambatan = 0;
         $dendaKondisi       = 0;
 
-        // 1. Hitung hari terlambat (untuk display info saja)
+        // 1. Hitung hari terlambat
         if ($p->tgl_jatuh_tempo) {
             $jatuhTempo = \Carbon\Carbon::parse($p->tgl_jatuh_tempo)->startOfDay();
 
+            // Tentukan tanggal acuan berdasarkan status
             if ($p->status === 'dipinjam') {
                 $acuan = now()->startOfDay();
-            } else {
+            } elseif ($p->tgl_kembali) {
                 $acuan = \Carbon\Carbon::parse($p->tgl_kembali)->startOfDay();
+            } else {
+                // Jika status bukan dipinjam tapi tgl_kembali kosong, gunakan hari ini
+                $acuan = now()->startOfDay();
             }
 
             $hariTerlambat      = max(0, (int) $jatuhTempo->diffInDays($acuan, false) * -1);
             $dendaKeterlambatan = $hariTerlambat * 2000;
         }
 
-        // 2. Hitung denda kondisi dari status (untuk display info saja)
+        // 2. Hitung denda kondisi dari status
         if ($p->kondisi === 'hilang') {
             $dendaKondisi = 50000;
         } elseif ($p->kondisi === 'rusak') {
@@ -47,11 +51,17 @@ class KepalaController extends Controller
         // 3. TOTAL DENDA DARI DATABASE (input petugas), bukan hasil perhitungan
         $totalDenda = (int) ($p->denda ?? 0);
 
+        // 4. Jika denda kondisi kosong tapi total denda ada, hitung hari terlambat dari total
+        if ($dendaKondisi === 0 && $totalDenda > 0) {
+            $hariTerlambat      = (int) ($totalDenda / 2000);
+            $dendaKeterlambatan = $totalDenda;
+        }
+
         return [
             'hari_terlambat'      => $hariTerlambat,
             'denda_keterlambatan' => $dendaKeterlambatan,
             'denda_kondisi'       => $dendaKondisi,
-            'total_denda'         => $totalDenda,  // ← DARI DATABASE
+            'total_denda'         => $totalDenda,
         ];
     }
 
@@ -87,7 +97,12 @@ class KepalaController extends Controller
     // =========================================================
     public function laporan()
     {
+        $bulan = request('bulan') ? request('bulan') : now()->format('Y-m');
+        list($tahun, $bulanNum) = explode('-', $bulan);
+        
         $data = Peminjaman::with('anggota')
+            ->whereMonth('tgl_pinjam', $bulanNum)
+            ->whereYear('tgl_pinjam', $tahun)
             ->orderByDesc('created_at')
             ->get()
             ->map(function ($p) {
@@ -99,7 +114,7 @@ class KepalaController extends Controller
                 return $p;
             });
 
-        return view('Kepala.laporan', compact('data'));
+        return view('Kepala.laporan', compact('data', 'bulan'));
     }
 
     // =========================================================
@@ -122,7 +137,12 @@ class KepalaController extends Controller
     // =========================================================
     public function cetakPdfLaporan()
     {
+        $bulan = request('bulan') ? request('bulan') : now()->format('Y-m');
+        list($tahun, $bulanNum) = explode('-', $bulan);
+        
         $data = Peminjaman::with('anggota')
+            ->whereMonth('tgl_pinjam', $bulanNum)
+            ->whereYear('tgl_pinjam', $tahun)
             ->orderByDesc('created_at')
             ->get()
             ->map(function ($p) {
@@ -134,10 +154,11 @@ class KepalaController extends Controller
                 return $p;
             });
 
+        $pdfFileName = 'laporan-peminjaman-' . \Carbon\Carbon::createFromFormat('Y-m', $bulan)->format('F-Y') . '.pdf';
         $pdf = Pdf::loadView('Kepala.laporan_cetak_pdf', compact('data'))
                   ->setPaper('a4', 'landscape');
 
-        return $pdf->download('laporan-peminjaman-' . now()->format('d-m-Y') . '.pdf');
+        return $pdf->download($pdfFileName);
     }
 
     // =========================================================

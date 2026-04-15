@@ -5,8 +5,13 @@
 
 @section('content')
 
-<div style="margin-bottom:15px;">
+<div style="margin-bottom:15px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
     <span style="font-size:18px; font-weight:bold;">Daftar Peminjaman</span>
+
+    {{-- FILTER ANGGOTA --}}
+    <input type="text" id="filterAnggota" placeholder="🔍 Cari nama anggota..."
+           onkeyup="filterTable()"
+           style="padding:7px 12px; border:1px solid #ccc; border-radius:6px; font-size:13px; width:220px;">
 </div>
 
 @if(session('success'))
@@ -15,7 +20,7 @@
     </div>
 @endif
 
-<table style="width:100%; border-collapse:collapse;">
+<table id="tabelPeminjaman" style="width:100%; border-collapse:collapse;">
     <thead>
         <tr style="background:#977868; color:white;">
             <th style="padding:12px;">No</th>
@@ -33,9 +38,15 @@
         @forelse($peminjaman as $i => $p)
         @php
             $tglJatuhTempo = $p->tgl_jatuh_tempo ? \Carbon\Carbon::parse($p->tgl_jatuh_tempo) : null;
+            $tglKembali    = $p->tgl_kembali ? \Carbon\Carbon::parse($p->tgl_kembali) : null;
+            
+            // Cek terlambat untuk status "dipinjam" (belum dikembalikan)
             $terlambat     = $tglJatuhTempo && $p->status === 'dipinjam' && now()->gt($tglJatuhTempo);
             $hariTerlambat = $terlambat ? (int) now()->diffInDays($tglJatuhTempo) : 0;
             $sisaHari      = ($tglJatuhTempo && $p->status === 'dipinjam') ? (int) now()->diffInDays($tglJatuhTempo, false) : null;
+            
+            // Cek terlambat untuk pengembalian (sudah dikembalikan tapi melebihi jatuh tempo)
+            $pengembalianTerlambat = $tglJatuhTempo && $tglKembali && $tglKembali->gt($tglJatuhTempo) && ($p->status === 'dikembalikan' || $p->status === 'mengembalikan');
         @endphp
         <tr style="background:{{ $i % 2 == 0 ? '#f9f9f9' : '#eee' }}; text-align:center;">
             <td style="padding:10px;">{{ $i + 1 }}</td>
@@ -73,6 +84,8 @@
                     <span style="background:#fff3cd;color:#856404;padding:3px 10px;border-radius:20px;font-size:12px;">Dipinjam</span>
                 @elseif($p->status === 'mengembalikan')
                     <span style="background:#cce5ff;color:#004085;padding:3px 10px;border-radius:20px;font-size:12px;">🔄 Minta Kembali</span>
+                @elseif($pengembalianTerlambat)
+                    <span style="background:#f8d7da;color:#721c24;padding:3px 10px;border-radius:20px;font-size:12px;">⚠️ Dikembalikan Terlambat</span>
                 @else
                     <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:12px;">✅ Dikembalikan</span>
                 @endif
@@ -120,11 +133,7 @@
                     Edit
                 </a>
 
-                {{-- ✅ TOMBOL CETAK STRUK - muncul jika ada denda ATAU sudah dikembalikan --}}
                 @if($p->denda > 0 || $p->status === 'dikembalikan')
-                
-
-                {{-- ✅ TOMBOL CETAK DENDA KECIL - muncul jika ada denda --}}
                 @if($p->denda > 0)
                 <a href="{{ route('petugas.peminjaman.cetak.denda', $p) }}" target="_blank"
                    style="background:#8b4513;color:white;padding:5px 10px;border-radius:5px;font-size:12px;text-decoration:none;display:inline-block;margin-top:4px; margin-left:2px;"
@@ -161,5 +170,13 @@ function showDendaEdit(id, current) {
 function hideDendaEdit(id) {
     document.getElementById('denda-label-' + id).style.display = 'inline';
     document.getElementById('denda-form-' + id).style.display = 'none';
+}
+function filterTable() {
+    const input = document.getElementById('filterAnggota').value.toLowerCase();
+    const rows = document.querySelectorAll('#tabelPeminjaman tbody tr');
+    rows.forEach(row => {
+        const namaAnggota = row.cells[1]?.textContent.toLowerCase() || '';
+        row.style.display = namaAnggota.includes(input) ? '' : 'none';
+    });
 }
 </script>

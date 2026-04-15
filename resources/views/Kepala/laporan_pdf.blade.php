@@ -111,21 +111,25 @@
 <div class="section-title">Informasi Denda</div>
 @if($peminjaman->denda > 0)
 <div class="denda-box">
-    @if($peminjaman->denda_keterlambatan > 0)
-    <div class="denda-row">
-        <span>Keterlambatan ({{ $peminjaman->hari_terlambat }} hari × Rp 2.000)</span>
-        <span>Rp {{ number_format($peminjaman->denda_keterlambatan, 0, ',', '.') }}</span>
-    </div>
-    @endif
-
-    @if($peminjaman->denda_kondisi > 0)
+    @php
+        $dendaKondisi = $peminjaman->denda_kondisi ?? 0;
+        $dendaTerlambat = $peminjaman->denda_keterlambatan ?? 0;
+        $hariTerlambat = $peminjaman->hari_terlambat ?? 0;
+    @endphp
+    
+    @if($dendaKondisi > 0)
     <div class="denda-row">
         <span>
             @if($peminjaman->kondisi === 'hilang') Buku Hilang
             @else Buku Rusak
             @endif
         </span>
-        <span>Rp {{ number_format($peminjaman->denda_kondisi, 0, ',', '.') }}</span>
+        <span>Rp {{ number_format($dendaKondisi, 0, ',', '.') }}</span>
+    </div>
+    @elseif($dendaTerlambat > 0)
+    <div class="denda-row">
+        <span>Keterlambatan ({{ $hariTerlambat }} hari × Rp 2.000)</span>
+        <span>Rp {{ number_format($dendaTerlambat, 0, ',', '.') }}</span>
     </div>
     @endif
 

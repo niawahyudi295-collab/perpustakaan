@@ -6,25 +6,50 @@
 @section('content')
 
 @php
-    $denda = $peminjaman->denda ?? 0;
-    $dendaKondisi = $peminjaman->denda_kondisi ?? 0;
+    $dendaKondisi   = $peminjaman->denda_kondisi ?? 0;
     $dendaTerlambat = $peminjaman->denda_keterlambatan ?? 0;
-    $hariTerlambat = $peminjaman->hari_terlambat ?? 0;
-    
-    // Keterangan denda
-    $keteranganDenda = [];
-    if ($dendaKondisi > 0) {
-        if ($peminjaman->kondisi === 'hilang') {
-            $keteranganDenda[] = '📕 Buku Hilang: Rp 50.000';
-        } elseif ($peminjaman->kondisi === 'rusak') {
-            $keteranganDenda[] = '📙 Buku Rusak: Rp 20.000';
-        }
-    }
-    if ($hariTerlambat > 0) {
-        $keteranganDenda[] = "⏰ Terlambat {$hariTerlambat} hari × Rp 2.000 = Rp " . number_format($dendaTerlambat, 0, ',', '.');
-    }
-@endphp
+    $hariTerlambat  = $peminjaman->hari_terlambat ?? 0;
 
+    // Jika ada denda kondisi (hilang/rusak), hanya gunakan denda kondisi
+    // Jika tidak ada denda kondisi, gunakan denda terlambat
+    $denda = ($dendaKondisi > 0) ? $dendaKondisi : $dendaTerlambat;
+
+    // Bangun keterangan denda berdasarkan nominal
+    $keteranganDenda = [];
+
+    if ($dendaKondisi === 50000) {
+        $keteranganDenda[] = ['label' => '📕 Buku Hilang', 'nominal' => 'Rp 50.000'];
+    } elseif ($dendaKondisi === 20000) {
+        $keteranganDenda[] = ['label' => '📙 Buku Rusak', 'nominal' => 'Rp 20.000'];
+    } elseif ($dendaTerlambat > 0) {
+        $keteranganDenda[] = ['label' => '⏰ Terlambat (' . $hariTerlambat . ' hari)', 'nominal' => 'Rp ' . number_format($dendaTerlambat, 0, ',', '.')]; 
+    }
+
+    
+
+    $statusColors = [
+        'dipinjam'      => ['bg' => '#fff3cd', 'text' => '#856404', 'label' => '📖 Sedang Dipinjam'],
+        'mengembalikan' => ['bg' => '#cce5ff', 'text' => '#004085', 'label' => '🔄 Menunggu Pengembalian'],
+        'dikembalikan'  => ['bg' => '#d4edda', 'text' => '#155724', 'label' => '✓ Sudah Dikembalikan'],
+        'hilang'        => ['bg' => '#f8d7da', 'text' => '#721c24', 'label' => '📕 Buku Hilang'],
+        'rusak'         => ['bg' => '#ffeaa7', 'text' => '#856400', 'label' => '📙 Buku Rusak'],
+        'terlambat'     => ['bg' => '#f8d7da', 'text' => '#721c24', 'label' => '⚠️ Terlambat'],
+    ];
+
+    $statusDasar = strtolower($peminjaman->status ?? '');
+
+    if ($dendaKondisi === 50000) {
+        $displayStatus = 'hilang';
+    } elseif ($dendaKondisi === 20000) {
+        $displayStatus = 'rusak';
+    } elseif ($hariTerlambat > 0) {
+        $displayStatus = 'terlambat';
+    } else {
+        $displayStatus = $statusDasar;
+    }
+
+    $colors = $statusColors[$displayStatus] ?? ['bg' => '#e2e3e5', 'text' => '#383d41', 'label' => $peminjaman->status];
+@endphp
 <style>
 .card-custom {
     background: white;
@@ -135,7 +160,10 @@
     justify-content: space-between;
     padding: 8px 0;
     font-size: 13px;
+    border-bottom: 1px dashed #f0d080;
 }
+
+.denda-item:last-child { border-bottom: none; }
 
 .denda-total {
     font-weight: 700;
@@ -161,7 +189,7 @@
 </div>
 
 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-    
+
     {{-- Main Info --}}
     <div>
         {{-- Info Anggota --}}
@@ -195,9 +223,9 @@
             <div class="info-row">
                 <div class="info-label">Kondisi Buku</div>
                 <div class="info-value">
-                    @if($peminjaman->kondisi === 'hilang')
+                    @if($dendaKondisi === 50000)
                         <span class="badge-status" style="background: #f8d7da; color: #721c24;">📕 Hilang</span>
-                    @elseif($peminjaman->kondisi === 'rusak')
+                    @elseif($dendaKondisi === 20000)
                         <span class="badge-status" style="background: #ffeaa7; color: #856400;">📙 Rusak</span>
                     @else
                         <span class="badge-status" style="background: #d4edda; color: #155724;">✅ Baik</span>
@@ -224,29 +252,6 @@
             <div class="info-row">
                 <div class="info-label">Status Peminjaman</div>
                 <div class="info-value">
-                    @php
-                        $statusColors = [
-                            'dipinjam' => ['bg' => '#fff3cd', 'text' => '#856404', 'label' => 'Sedang Dipinjam'],
-                            'mengembalikan' => ['bg' => '#cce5ff', 'text' => '#004085', 'label' => 'Menunggu Pengembalian'],
-                            'dikembalikan' => ['bg' => '#d4edda', 'text' => '#155724', 'label' => '✓ Sudah Dikembalikan'],
-                            'hilang' => ['bg' => '#f8d7da', 'text' => '#721c24', 'label' => '📕 Buku Hilang'],
-                            'rusak' => ['bg' => '#ffeaa7', 'text' => '#856400', 'label' => '📙 Buku Rusak'],
-                            'terlambat' => ['bg' => '#f8d7da', 'text' => '#721c24', 'label' => '⚠️ Terlambat'],
-                        ];
-                        
-                        // Tentukan status berdasarkan denda
-                        if ($peminjaman->denda >= 50000) {
-                            $displayStatus = 'hilang';
-                        } elseif ($peminjaman->denda >= 20000) {
-                            $displayStatus = 'rusak';
-                        } elseif ($peminjaman->denda > 0) {
-                            $displayStatus = 'terlambat';
-                        } else {
-                            $displayStatus = strtolower($peminjaman->status);
-                        }
-                        
-                        $colors = $statusColors[$displayStatus] ?? ['bg' => '#e2e3e5', 'text' => '#383d41', 'label' => $peminjaman->status];
-                    @endphp
                     <span class="badge-status" style="background: {{ $colors['bg'] }}; color: {{ $colors['text'] }};">
                         {{ $colors['label'] }}
                     </span>
@@ -264,12 +269,13 @@
         {{-- Denda Info --}}
         <div class="card-custom {{ $denda > 0 ? 'danger' : 'success' }}">
             <div class="card-title">💰 Informasi Denda</div>
-            
+
             @if($denda > 0)
                 <div class="denda-container">
                     @foreach($keteranganDenda as $ket)
                         <div class="denda-item">
-                            <span>{{ $ket }}</span>
+                            <span>{{ $ket['label'] }}</span>
+                            <span style="font-weight: 600; color: #c0392b;">{{ $ket['nominal'] }}</span>
                         </div>
                     @endforeach
                     <div class="denda-total">

@@ -375,16 +375,19 @@
                     $ketDenda = '-';
                     $hariTerlambat = $p->hari_terlambat ?? 0;
                     $dendaKondisi = $p->denda_kondisi ?? 0;
+                    $dendaTerlambat = $p->denda_keterlambatan ?? 0;
 
+                    // Jika ada denda kondisi (hilang/rusak), tampilkan hanya itu
+                    // Jika tidak ada denda kondisi, tampilkan denda terlambat
                     if ($dendaKondisi == 50000) {
                         $ketDenda = 'Buku hilang';
                     } elseif ($dendaKondisi == 20000) {
                         $ketDenda = 'Buku rusak';
+                    } elseif ($hariTerlambat > 0 && $dendaTerlambat > 0) {
+                        $ketDenda = "Telat {$hariTerlambat} hari";
                     }
                     
-                    if ($hariTerlambat > 0) {
-                        $ketDenda = ($ketDenda != '-' ? $ketDenda . ' + ' : '') . "Telat {$hariTerlambat} hari";
-                    }
+                    $keteranganDenda = $ketDenda;
 
                     $jatuhTempoClass = 'jt-hijau';
                     if ($p->tgl_jatuh_tempo && strtolower($p->status) === 'dipinjam' && \Carbon\Carbon::parse($p->tgl_jatuh_tempo)->isPast()) {
