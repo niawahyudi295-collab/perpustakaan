@@ -311,6 +311,31 @@
             </div>
         </div>
 
+        {{-- Status Pembayaran Denda --}}
+        @if($denda > 0)
+        <div class="card-custom">
+            <div class="card-title">💳 Status Pembayaran Denda</div>
+            <div class="info-row">
+                <div class="info-label">Status Pembayaran</div>
+                <div class="info-value">
+                    @if($peminjaman->status_pembayaran === 'belum_dibayar')
+                        <span class="badge-status" style="background: #fff3cd; color: #856404;font-weight:600;">💰 Belum Dibayar</span>
+                    @elseif($peminjaman->status_pembayaran === 'pending_konfirmasi')
+                        <span class="badge-status" style="background: #cce5ff; color: #004085;font-weight:600;">⏳ Menunggu Konfirmasi</span>
+                    @elseif($peminjaman->status_pembayaran === 'lunas')
+                        <span class="badge-status" style="background: #d4edda; color: #155724;font-weight:600;">✅ LUNAS</span>
+                    @endif
+                </div>
+            </div>
+            @if($peminjaman->status_pembayaran === 'lunas' && $peminjaman->tgl_konfirmasi_pembayaran)
+            <div class="info-row">
+                <div class="info-label">Tanggal Konfirmasi</div>
+                <div class="info-value">{{ \Carbon\Carbon::parse($peminjaman->tgl_konfirmasi_pembayaran)->format('d F Y H:i') }}</div>
+            </div>
+            @endif
+        </div>
+        @endif
+
         {{-- Action Button --}}
         <a href="{{ route('kepala.laporan.pdf', $peminjaman->id) }}" target="_blank" class="btn-print-detail">
             📄 Cetak PDF Detail

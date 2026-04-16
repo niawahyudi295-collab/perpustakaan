@@ -31,6 +31,7 @@
             <th style="padding:12px;">Tgl Kembali</th>
             <th style="padding:12px;">Status</th>
             <th style="padding:12px;">Denda</th>
+            <th style="padding:12px;">Status Bayar</th>
             <th style="padding:12px;">Aksi</th>
         </tr>
     </thead>
@@ -106,6 +107,21 @@
                 </form>
             </td>
 
+            {{-- KOLOM STATUS PEMBAYARAN DENDA --}}
+            <td style="padding:10px; text-align:center;">
+                @if($p->denda > 0)
+                    @if($p->status_pembayaran === 'belum_dibayar')
+                        <span style="background:#fff3cd;color:#856404;padding:3px 10px;border-radius:20px;font-size:11px;">💰 Belum Dibayar</span>
+                    @elseif($p->status_pembayaran === 'pending_konfirmasi')
+                        <span style="background:#cce5ff;color:#004085;padding:3px 10px;border-radius:20px;font-size:11px;">⏳ Pending</span>
+                    @elseif($p->status_pembayaran === 'lunas')
+                        <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;">✅ LUNAS</span>
+                    @endif
+                @else
+                    <span style="color:#aaa;font-size:11px;">-</span>
+                @endif
+            </td>
+
             {{-- KOLOM AKSI --}}
             <td style="padding:10px;">
                 @if($p->status === 'menunggu')
@@ -124,8 +140,16 @@
                             Konfirmasi Kembali
                         </button>
                     </form>
-                @else
-                    <span style="color:#999;font-size:12px;">-</span>
+                @endif
+
+                @if($p->denda > 0 && $p->status_pembayaran === 'pending_konfirmasi')
+                    <form action="{{ route('petugas.peminjaman.konfirmasi.denda', $p) }}" method="POST" style="display:inline;"
+                          onsubmit="return confirm('Konfirmasi pembayaran denda Rp ' + '{{ number_format($p->denda, 0, ',', '.') }}' + '?')">
+                        @csrf @method('PATCH')
+                        <button style="background:#0275d8;color:white;padding:5px 10px;border:none;border-radius:5px;cursor:pointer;font-size:12px; margin-top:3px;">
+                            ✓ Konfirmasi Bayar
+                        </button>
+                    </form>
                 @endif
 
                 <a href="{{ route('petugas.peminjaman.edit', $p) }}"
@@ -133,7 +157,13 @@
                     Edit
                 </a>
 
-                @if($p->denda > 0 || $p->status === 'dikembalikan')
+                @if($p->denda > 0 && $p->status_pembayaran === 'lunas')
+                <a href="{{ route('petugas.peminjaman.cetak.denda', $p) }}" target="_blank"
+                   style="background:#8b4513;color:white;padding:5px 10px;border-radius:5px;font-size:12px;text-decoration:none;display:inline-block;margin-top:4px; margin-left:2px;"
+                   title="Cetak bukti denda (kertas kecil)">
+                    📄 Denda
+                </a>
+                @elseif($p->denda > 0 || $p->status === 'dikembalikan')
                 @if($p->denda > 0)
                 <a href="{{ route('petugas.peminjaman.cetak.denda', $p) }}" target="_blank"
                    style="background:#8b4513;color:white;padding:5px 10px;border-radius:5px;font-size:12px;text-decoration:none;display:inline-block;margin-top:4px; margin-left:2px;"

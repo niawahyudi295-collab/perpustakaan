@@ -363,8 +363,9 @@
                 <th width="12%">Tgl Jatuh Tempo</th>
                 <th width="10%">Tgl Kembali</th>
                 <th width="12%">Status</th>
-                <th width="10%">Keterangan Denda</th>
-                <th width="9%">Denda</th>
+                <th width="8%">Keterangan Denda</th>
+                <th width="8%">Denda</th>
+                <th width="8%">Status Bayar</th>
             </tr>
         </thead>
         <tbody>
@@ -435,6 +436,19 @@
                     <td class="text-right {{ $denda > 0 ? 'denda-merah' : '' }}">
                         {{ $denda > 0 ? 'Rp ' . number_format($denda, 0, ',', '.') : '-' }}
                     </td>
+                    <td class="text-center" style="font-size:9px;">
+                        @if($denda > 0)
+                            @if($p->status_pembayaran === 'belum_dibayar')
+                                <span style="font-weight:600;color:#856404;">💰 Belum</span>
+                            @elseif($p->status_pembayaran === 'pending_konfirmasi')
+                                <span style="font-weight:600;color:#004085;">⏳ Pending</span>
+                            @elseif($p->status_pembayaran === 'lunas')
+                                <span style="font-weight:600;color:#155724;">✅ LUNAS</span>
+                            @endif
+                        @else
+                            <span style="color:#aaa;">-</span>
+                        @endif
+                    </td>
                 </tr>
             @empty
                 <tr>
@@ -445,7 +459,7 @@
         <tfoot>
             <tr>
                 <td colspan="8" class="text-right" style="text-align:right; padding-right:10px;">Total Denda Keseluruhan:</td>
-                <td class="text-right denda-merah">Rp {{ number_format($totalDenda, 0, ',', '.') }}</td>
+                <td colspan="2" class="text-right denda-merah">Rp {{ number_format($totalDenda, 0, ',', '.') }}</td>
             </tr>
         </tfoot>
     </table>

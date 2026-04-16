@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Peminjaman;
 
 class PeminjamanController extends Controller
 {
@@ -33,13 +35,13 @@ class PeminjamanController extends Controller
         return view('Anggota.peminjaman', compact('peminjaman'));
     }
 
-    // 📌 HALAMAN FORM
+    //  HALAMAN FORM
     public function create()
     {
         return view('Anggota.create_peminjaman');
     }
 
-    // 📌 SIMPAN DATA
+    //  SIMPAN DATA
     public function store(Request $request)
     {
         $request->validate([
@@ -51,7 +53,7 @@ class PeminjamanController extends Controller
         dd($request->all());
     }
 
-    // 📌 CETAK STRUK
+    // CETAK STRUK
     public function cetak($id)
     {
         $data = [
@@ -73,7 +75,7 @@ class PeminjamanController extends Controller
             ]
         ];
 
-        // 🔒 cek data ada atau tidak
+        //  cek data ada atau tidak
         if (!array_key_exists($id, $data)) {
             abort(404);
         }
@@ -81,5 +83,48 @@ class PeminjamanController extends Controller
         $peminjaman = $data[$id];
 
         return view('petugas.peminjaman.cetak', compact('peminjaman'));
+    }
+
+    //  ANGGOTA BAYAR DENDA
+    public function bayarDenda(Peminjaman $peminjaman)
+    {
+        // Cek apakah anggota yang login adalah pemilik peminjaman
+        if ($peminjaman->anggota_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Cek apakah peminjaman ada denda dan belum dibayar
+        if ($peminjaman->denda <= 0) {
+            return back()->with('error', 'Tidak ada denda untuk pembayaran.');
+        }
+
+        if ($peminjaman->status_pembayaran === 'lunas') {
+            return back()->with('error', 'Denda sudah lunas.');
+        }
+
+        // Update status pembayaran menjadi pending_konfirmasi
+        $peminjaman->update([
+            'status_pembayaran' => 'pending_konfirmasi',
+            'tgl_pembayaran' => now(),
+        ]);
+
+        return redirect()->route('anggota.peminjaman')->with('success', 'Permintaan pembayaran denda berhasil diajukan. Menunggu konfirmasi petugas.');
+    }
+
+    //  PETUGAS KONFIRMASI PEMBAYARAN DENDA
+    public function konfirmasiDenda(Peminjaman $peminjaman)
+    {
+        // Cek status pembayaran
+        if ($peminjaman->status_pembayaran !== 'pending_konfirmasi') {
+            return back()->with('error', 'Status pembayaran tidak valid.');
+        }
+
+        // Konfirmasi pembayaran
+        $peminjaman->update([
+            'status_pembayaran' => 'lunas',
+            'tgl_konfirmasi_pembayaran' => now(),
+        ]);
+
+        return redirect()->route('petugas.peminjaman')->with('success', 'Pembayaran denda berhasil dikonfirmasi. Status denda: LUNAS');
     }
 }

@@ -447,6 +447,29 @@
                 @endif
             </div>
 
+            {{-- Status Pembayaran --}}
+            <div class="info-section" style="margin-top: 12px;">
+                <div class="section-title">Status Pembayaran</div>
+                <div class="info-row">
+                    <span class="label">Status:</span>
+                    <span class="value">
+                        @if($peminjaman->status_pembayaran === 'lunas')
+                            <span style="color: #155724; font-weight: bold;">✅ LUNAS</span>
+                        @elseif($peminjaman->status_pembayaran === 'pending_konfirmasi')
+                            <span style="color: #004085;">⏳ Menunggu Konfirmasi</span>
+                        @else
+                            <span style="color: #856404;">💰 Belum Dibayar</span>
+                        @endif
+                    </span>
+                </div>
+                @if($peminjaman->status_pembayaran === 'lunas' && $peminjaman->tgl_konfirmasi_pembayaran)
+                    <div class="info-row">
+                        <span class="label">Konfirmasi:</span>
+                        <span class="value">{{ \Carbon\Carbon::parse($peminjaman->tgl_konfirmasi_pembayaran)->format('d/m/Y H:i') }}</span>
+                    </div>
+                @endif
+            </div>
+
             {{-- Footer --}}
             <div class="footer">
                 <div>Petugas: {{ Auth::user()->name ?? '-' }}</div>

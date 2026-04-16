@@ -195,6 +195,7 @@
                     <th style="padding: 12px; text-align: center;">Tgl Kembali</th>
                     <th style="padding: 12px; text-align: center;">Status</th>
                     <th style="padding: 12px; text-align: right;">Denda</th>
+                    <th style="padding: 12px; text-align: center;">Status Bayar</th>
                     <th style="padding: 12px; text-align: center;">Aksi</th>
                 </tr>
             </thead>
@@ -254,6 +255,19 @@
                         @endif
                     </td>
                     <td style="padding: 12px; text-align: center;">
+                        @if($p->denda > 0)
+                            @if($p->status_pembayaran === 'belum_dibayar')
+                                <span style="background:#fff3cd;color:#856404;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block;">💰 Belum Dibayar</span>
+                            @elseif($p->status_pembayaran === 'pending_konfirmasi')
+                                <span style="background:#cce5ff;color:#004085;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block;">⏳ Pending</span>
+                            @elseif($p->status_pembayaran === 'lunas')
+                                <span style="background:#d4edda;color:#155724;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block;">✅ LUNAS</span>
+                            @endif
+                        @else
+                            <span style="color:#aaa;font-size:11px;">-</span>
+                        @endif
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
                         <a href="{{ route('kepala.laporan.detail', $p->id) }}" class="action-btn">
                             👁️ Lihat
                         </a>
@@ -263,11 +277,10 @@
             </tbody>
             <tfoot style="background: linear-gradient(135deg, #fef9ec, #f5f0e8); border-top: 2px solid #C8A850;">
                 <tr>
-                    <td colspan="7" style="padding: 12px; text-align: right; font-weight: 600; color: #382e2e;">Total Denda Keseluruhan:</td>
-                    <td style="padding: 12px; text-align: right; font-weight: 700; color: #e74c3c; font-size: 14px;">
+                    <td colspan="8" style="padding: 12px; text-align: right; font-weight: 600; color: #382e2e;">Total Denda Keseluruhan:</td>
+                    <td style="padding: 12px; text-align: right; font-weight: 700; color: #e74c3c; font-size: 14px;" colspan="2">
                         Rp {{ number_format($totalDenda, 0, ',', '.') }}
                     </td>
-                    <td></td>
                 </tr>
             </tfoot>
         </table>

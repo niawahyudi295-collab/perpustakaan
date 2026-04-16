@@ -19,7 +19,10 @@ class Peminjaman extends Model
         'tgl_kembali',
         'status',
         'denda',
-        'kondisi'
+        'kondisi',
+        'status_pembayaran',
+        'tgl_pembayaran',
+        'tgl_konfirmasi_pembayaran'
     ];
 
     public function anggota()

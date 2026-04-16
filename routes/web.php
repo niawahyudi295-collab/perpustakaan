@@ -43,6 +43,7 @@ Route::middleware(['auth', 'role:anggota'])->prefix('anggota')->name('anggota.')
     Route::get('/pengembalian', [AnggotaController::class, 'pengembalian'])->name('pengembalian');
     Route::get('/riwayat', [AnggotaController::class, 'riwayat'])->name('riwayat');
     Route::patch('/peminjaman/{peminjaman}/kembalikan', [AnggotaController::class, 'kembalikan'])->name('peminjaman.kembalikan');
+    Route::patch('/peminjaman/{peminjaman}/bayar-denda', [PeminjamanController::class, 'bayarDenda'])->name('peminjaman.bayar.denda');
     Route::get('/profile', [AnggotaController::class, 'profile'])->name('profile');
     Route::put('/profile', [AnggotaController::class, 'updateProfile'])->name('profile.update');
 });
@@ -72,13 +73,12 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')
     Route::patch('/peminjaman/{peminjaman}/konfirmasi-kembali', [PetugasController::class, 'konfirmasiKembali'])->name('peminjaman.konfirmasi.kembali');
     Route::patch('/peminjaman/{peminjaman}/denda', [PetugasController::class, 'updateDenda'])->name('peminjaman.update.denda');
     Route::get('/peminjaman/{peminjaman}/cetak-denda', [PetugasController::class, 'cetakDenda'])->name('peminjaman.cetak.denda');
+    Route::patch('/peminjaman/{peminjaman}/konfirmasi-denda', [PeminjamanController::class, 'konfirmasiDenda'])->name('peminjaman.konfirmasi.denda');
     Route::get('/kategori', [PetugasController::class, 'kategori'])->name('kategori');
     Route::post('/kategori', [PetugasController::class, 'storeKategori'])->name('kategori.store');
     Route::put('/kategori/{kategori}', [PetugasController::class, 'updateKategori'])->name('kategori.update');
     Route::delete('/kategori/{kategori}', [PetugasController::class, 'destroyKategori'])->name('kategori.destroy');
     Route::resource('bukupetugas', BukuPetugasController::class);
-    Route::post('/konfirmasi-denda/{id}', [PeminjamanController::class, 'konfirmasiDenda'])
-    ->name('konfirmasi.denda');
     
     
 });

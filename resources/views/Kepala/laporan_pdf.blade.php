@@ -146,6 +146,34 @@
 </table>
 @endif
 
+<div class="section-title">Status Pembayaran Denda</div>
+@if($peminjaman->denda > 0)
+<table class="info">
+    <tr>
+        <td>Status Pembayaran</td>
+        <td>
+            @if($peminjaman->status_pembayaran === 'belum_dibayar')
+                <strong style="color:#856404;">💰 Belum Dibayar</strong>
+            @elseif($peminjaman->status_pembayaran === 'pending_konfirmasi')
+                <strong style="color:#004085;">⏳ Menunggu Konfirmasi</strong>
+            @elseif($peminjaman->status_pembayaran === 'lunas')
+                <strong style="color:#155724;">✅ LUNAS</strong>
+            @endif
+        </td>
+    </tr>
+    @if($peminjaman->status_pembayaran === 'lunas' && $peminjaman->tgl_konfirmasi_pembayaran)
+    <tr>
+        <td>Tanggal Konfirmasi</td>
+        <td>{{ \Carbon\Carbon::parse($peminjaman->tgl_konfirmasi_pembayaran)->format('d F Y, H:i:s') }} WIB</td>
+    </tr>
+    @endif
+</table>
+@else
+<table class="info">
+    <tr><td>Keterangan</td><td>Tidak ada denda, pembayaran tidak diperlukan</td></tr>
+</table>
+@endif
+
 <div class="footer">
     Dokumen ini dicetak secara otomatis oleh Sistem Perpustakaan Digital
 </div>

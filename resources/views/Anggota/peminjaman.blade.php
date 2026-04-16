@@ -27,6 +27,7 @@
                 <th class="px-4 py-3 text-center">Tgl Kembali</th>
                 <th class="px-4 py-3 text-center">Status</th>
                 <th class="px-4 py-3 text-center">Denda</th>
+                <th class="px-4 py-3 text-center">Status Bayar</th>
                 <th class="px-4 py-3 text-center">Aksi</th>
                 
             </tr>
@@ -69,7 +70,43 @@
                     {{ $p->denda > 0 ? 'Rp '.number_format($p->denda,0,',','.') : '-' }}
                 </td>
                 <td class="px-4 py-3 text-center">
-                    @if($p->status === 'dipinjam')
+                    @if($p->denda > 0)
+                        @if($p->status_pembayaran === 'belum_dibayar')
+                            <span style="background:#fff3cd;color:#856404;padding:3px 10px;border-radius:20px;font-size:11px;">💰 Belum Dibayar</span>
+                        @elseif($p->status_pembayaran === 'pending_konfirmasi')
+                            <span style="background:#cce5ff;color:#004085;padding:3px 10px;border-radius:20px;font-size:11px;">⏳ Menunggu Konfirmasi</span>
+                        @elseif($p->status_pembayaran === 'lunas')
+                            <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;">✅ LUNAS</span>
+                        @endif
+                    @else
+                        <span class="text-gray-400 text-xs">-</span>
+                    @endif
+                </td>
+                <td class="px-4 py-3 text-center">
+                    {{-- PRIORITAS 1: Jika ada DENDA --}}
+                    @if($p->denda > 0)
+                        @if($p->status_pembayaran === 'belum_dibayar')
+                            {{-- Belum bayar: tampilkan button Bayar Denda --}}
+                            <form action="{{ route('anggota.peminjaman.bayar.denda', $p) }}" method="POST"
+                                  onsubmit="return confirm('Ajukan pembayaran denda Rp ' + '{{ number_format($p->denda, 0, ',', '.') }}' + '?')">
+                                @csrf @method('PATCH')
+                                <button class="text-white px-3 py-1 rounded text-xs font-semibold"
+                                        style="background:#0275d8;">💰 Bayar Denda</button>
+                            </form>
+                        @elseif($p->status_pembayaran === 'pending_konfirmasi')
+                            {{-- Pending: tampilkan menunggu konfirmasi --}}
+                            <span class="text-xs font-semibold" style="background:#cce5ff;color:#004085;padding:4px 8px;border-radius:15px;display:inline-block;">
+                                ⏳ Menunggu Konfirmasi
+                            </span>
+                        @elseif($p->status_pembayaran === 'lunas')
+                            {{-- Lunas: tampilkan LUNAS --}}
+                            <span class="text-xs font-semibold" style="background:#d4edda;color:#155724;padding:4px 8px;border-radius:15px;display:inline-block;">
+                                ✅ LUNAS
+                            </span>
+                        @endif
+                    {{-- PRIORITAS 2: Jika TIDAK ada denda --}}
+                    @elseif($p->status === 'dipinjam')
+                        {{-- Sedang dipinjam: bisa kembalikan --}}
                         <form action="{{ route('anggota.peminjaman.kembalikan', $p) }}" method="POST"
                               onsubmit="return confirm('Ajukan pengembalian buku ini?')">
                             @csrf @method('PATCH')
@@ -77,16 +114,23 @@
                                     style="background:#5cb85c;">Kembalikan</button>
                         </form>
                     @elseif($p->status === 'mengembalikan')
-                        <span class="text-xs text-blue-400">Menunggu konfirmasi petugas</span>
+                        {{-- Proses pengembalian menunggu konfirmasi --}}
+                        <span class="text-xs font-semibold" style="background:#cce5ff;color:#004085;padding:4px 8px;border-radius:15px;display:inline-block;">
+                            🔄 Menunggu Konfirmasi
+                        </span>
                     @elseif($p->status === 'menunggu')
-                        <span class="text-xs text-purple-400">Menunggu konfirmasi</span>
+                        {{-- Menunggu konfirmasi petugas --}}
+                        <span class="text-xs font-semibold" style="background:#e3d4f0;color:#6a1b9a;padding:4px 8px;border-radius:15px;display:inline-block;">
+                            ⏳ Menunggu Konfirmasi
+                        </span>
                     @else
+                        {{-- Status lainnya --}}
                         <span class="text-gray-400 text-xs">-</span>
                     @endif
                 </td>
             </tr>
         @empty
-            <tr><td colspan="8" class="px-4 py-6 text-center text-gray-400">Belum ada riwayat peminjaman.</td></tr>
+            <tr><td colspan="9" class="px-4 py-6 text-center text-gray-400">Belum ada riwayat peminjaman.</td></tr>
         @endforelse
         </tbody>
     </table>

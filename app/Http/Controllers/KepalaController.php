@@ -111,6 +111,8 @@ class KepalaController extends Controller
                 $p->denda_keterlambatan = $hasil['denda_keterlambatan'];
                 $p->denda_kondisi       = $hasil['denda_kondisi'];
                 $p->denda               = $hasil['total_denda'];
+                // Tambah status pembayaran
+                $p->status_pembayaran   = $p->status_pembayaran ?? 'belum_dibayar';
                 return $p;
             });
 
@@ -127,6 +129,8 @@ class KepalaController extends Controller
         $peminjaman->denda_keterlambatan = $hasil['denda_keterlambatan'];
         $peminjaman->denda_kondisi       = $hasil['denda_kondisi'];
         $peminjaman->denda               = $hasil['total_denda'];
+        // Tambah status pembayaran
+        $peminjaman->status_pembayaran   = $peminjaman->status_pembayaran ?? 'belum_dibayar';
 
         $peminjaman->load('anggota');
         return view('Kepala.laporan_detail', compact('peminjaman'));
@@ -151,6 +155,8 @@ class KepalaController extends Controller
                 $p->denda_keterlambatan = $hasil['denda_keterlambatan'];
                 $p->denda_kondisi       = $hasil['denda_kondisi'];
                 $p->denda               = $hasil['total_denda'];
+                // Tambah status pembayaran
+                $p->status_pembayaran   = $p->status_pembayaran ?? 'belum_dibayar';
                 return $p;
             });
 
@@ -171,6 +177,8 @@ class KepalaController extends Controller
         $peminjaman->denda_keterlambatan = $hasil['denda_keterlambatan'];
         $peminjaman->denda_kondisi       = $hasil['denda_kondisi'];
         $peminjaman->denda               = $hasil['total_denda'];
+        // Tambah status pembayaran
+        $peminjaman->status_pembayaran   = $peminjaman->status_pembayaran ?? 'belum_dibayar';
 
         $peminjaman->load('anggota');
 
